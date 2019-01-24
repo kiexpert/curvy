@@ -68,11 +68,12 @@ var playSpeed = 2; // 1X play.
 var radiusSegments = 6;
 var tubeRadius = 0.1;
 
-var tMin = -2.12, tMax = 1.12, tRange = tMax - tMin;
+//var tMin = -2.12, tMax = 1.12, tRange = tMax - tMin;
+var tMin = 0, tMax = 5, tRange = tMax - tMin;
 
-var xFuncText = "t^2 - 3*t";
-var yFuncText = "t^2 - 4*t^2";
-var zFuncText = "(t^5 - 10*t)/5";
+var xFuncText = "t*cos(3.14*2*t)";//"t^2 - 3*t";
+var yFuncText = "t*sin(3.14*2*t)"; //"t^2 - 4*t^2";
+var zFuncText = "t*2"; //"(t^5 - 10*t)/5";
 var yawFuncText = "t / 10 * 3.1415926";
 var xFunc = Parser.parse(xFuncText).toJSFunction( ['t'] );
 var yFunc = Parser.parse(yFuncText).toJSFunction( ['t'] );
