@@ -36,8 +36,13 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/1.7.0/math.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.4/raphael-min.js"></script>
 
-<script src="https://requirejs.org/docs/release/2.3.6/minified/require.js"></script>
-<script src='fit-curve.js'></script>
+
+<script>
+//var module = {};
+</script>
+
+<script src="./fit-curve.js"></script>
+<!-- script src="https://requirejs.org/docs/release/2.3.6/minified/require.js"></script -->
 
 <!---------------------------------------------------------------->
 
@@ -345,6 +350,8 @@ function path_csv() {
 	return csv;
 }
 
+//var fitCurve = require(['./fit-curve.js']);
+
 // export the trajectory to csv file and download.
 function traj_csv() {
 	var xFunc = Parser.parse(xFuncText).toJSFunction( ['t'] );
@@ -355,7 +362,6 @@ function traj_csv() {
 	var points = [];//[[0, 0], [10, 10], [10, 0], [20, 0]];
 	var timeps = [];
 
-	//var fitCurve = require('fit-curve');
 	var error = 50; // The smaller the number - the much closer spline should be
 
 	for(var t = tMin; t <= tMax; t += dt) {
