@@ -362,7 +362,7 @@ function traj_csv() {
 	var points = [];//[[0, 0], [10, 10], [10, 0], [20, 0]];
 	var timeps = [];
 
-	var error = 50; // The smaller the number - the much closer spline should be
+	var error = 0.1; // The smaller the number - the much closer spline should be
 
 	for(var t = tMin; t <= tMax; t += dt) {
 		// TODO: dt가 작아서 너무 많은 포인트가 생기는것 방지
