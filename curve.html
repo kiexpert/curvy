@@ -171,7 +171,7 @@ function init()
 	
 	parameters = 
 	{
-		trajectory: function() { toggleTrajectoryLibrary(); },
+		//trajectory: function() { toggleTrajectoryLibrary(); },
 		resetCam:  function() { resetCamera(); },	
 		play: function() { playGraph(); },
 		exportPath: function() { exportPathCSV(); },
@@ -219,7 +219,7 @@ function init()
 	autoUpdate = true;
 	
 
-	gui.add( parameters, 'trajectory' ).name("Trajectory Lib");
+	//gui.add( parameters, 'trajectory' ).name("Trajectory Lib");
 	gui.add( parameters, 'resetCam' ).name("Reset Camera");
 	gui.add( parameters, 'play').name("Play");
 	gui.add( parameters, 'exportPath').name("Export path.csv");
