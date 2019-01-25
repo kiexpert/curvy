@@ -112,6 +112,7 @@ animate();
 
 var SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT = window.innerHeight;
 var VIEW_ANGLE = 45, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 0.1, FAR = 20000;
+var cameraY;
 
 // FUNCTIONS 		
 function init() 
@@ -121,6 +122,15 @@ function init()
 	// CAMERA
 	camera = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR);
 	scene.add(camera);
+
+	if (true) {
+		cameraY = new THREE.PerspectiveCamera( VIEW_ANGLE, 2, NEAR, FAR);
+		cameraY.position.set( 0, -20, 1.5 );
+		cameraY.up = new THREE.Vector3( 0, 0, 1 );
+		cameraY.lookAt(scene.position);
+		scene.add( cameraY );
+	}
+
 	// RENDERER
 	if ( Detector.webgl )
 		renderer = new THREE.WebGLRenderer( {antialias:true} );
@@ -140,15 +150,6 @@ function init()
 	scene.add(light);
 	// SKYBOX/FOG
 	scene.fog = new THREE.FogExp2( 0x888888, 0.0025 );
-
-	var pcamera;// = new THREE.PerspectiveCamera( 45, 200 / 200 , 1, 1000 );
-	pcamera = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR);
-	THREEx.WindowResize(renderer, pcamera);
-	pcamera.position.set( 0, -9, 0 );
-	pcamera.up = new THREE.Vector3( 0, 0, 1 );
-	pcamera.lookAt(scene.position);
-	scene.add( pcamera );
-
 
 	////////////
 	// CUSTOM //
@@ -500,15 +501,26 @@ function update()
 
 function render() 
 {
+	if (false) {
+		renderer.render( scene, camera );
+		return;
+	}
+
 	renderer.setViewport(0,0,SCREEN_WIDTH,SCREEN_HEIGHT);
-	//renderer.setScissorTest(false);
+	//renderer.setSize(SCREEN_WIDTH,SCREEN_HEIGHT);
+	//camera.updateProjectionMatrix();
+	renderer.setClearColorHex(0x000000);
 	renderer.render( scene, camera );
 
-	renderer.setViewport(0,0,100,100);
-	//renderer.setScissor(0,0,100,100);
-	//renderer.setScissorTest(true);
-	pcamera.updateProjectionMatrix();
-	renderer.render( scene, pcamera );
+	//return;
+	renderer.setViewport(0,0,200,200);
+	renderer.setScissor(0,0,200,200);
+	renderer.enableScissorTest(true);
+	//renderer.setSize(100,100);
+	//cameraY.updateProjectionMatrix();
+	renderer.setClearColorHex(0x004400);
+	renderer.render( scene, cameraY );
+	renderer.enableScissorTest(false);
 }
 
 
