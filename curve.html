@@ -110,13 +110,14 @@ Knot = THREE.Curve.create(
 init();
 animate();
 
-var SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT = window.innerHeight;
-var VIEW_ANGLE = 45, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 0.1, FAR = 20000;
 var cameraY;
 
 // FUNCTIONS 		
 function init() 
 {
+	var SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT = window.innerHeight;
+	var VIEW_ANGLE = 45, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 0.1, FAR = 20000;
+	
 	// SCENE
 	scene = new THREE.Scene();
 	// CAMERA
@@ -124,7 +125,7 @@ function init()
 	scene.add(camera);
 
 	if (true) {
-		cameraY = new THREE.PerspectiveCamera( VIEW_ANGLE, 2, NEAR, FAR);
+		cameraY = new THREE.PerspectiveCamera( VIEW_ANGLE, 1, NEAR, FAR);
 		cameraY.position.set( 0, -20, 1.5 );
 		cameraY.up = new THREE.Vector3( 0, 0, 1 );
 		cameraY.lookAt(scene.position);
@@ -136,6 +137,7 @@ function init()
 		renderer = new THREE.WebGLRenderer( {antialias:true} );
 	else
 		renderer = new THREE.CanvasRenderer(); 
+
 	renderer.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
 	container = document.getElementById( 'ThreeJS' );
 	container.appendChild( renderer.domElement );
@@ -501,7 +503,10 @@ function update()
 
 function render() 
 {
-	if (false) {
+	var SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT = window.innerHeight;
+	var VIEW_ANGLE = 45, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 0.1, FAR = 20000;
+
+	if (!cameraY) {
 		renderer.render( scene, camera );
 		return;
 	}
