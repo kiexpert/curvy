@@ -362,14 +362,11 @@ function traj_csv() {
 	var points = [];//[[0, 0], [10, 10], [10, 0], [20, 0]];
 	var timeps = [];
 
-	for(var t = tMin; t <= tMax; t += dt) {
-		// TODO: dt가 작아서 너무 많은 포인트가 생기는것 방지
+	for(var t = tMin; t <= tMax; t += dt)
 		points.push([xFunc(t), yFunc(t), zFunc(t), yawFunc(t), t]);
-	}
 
-	var error = 0.01; // 1cm 이하의 정확도로 분할! // The smaller the number - the much closer spline should be
+	var error = 0.001; // 1mm 이하의 정확도로 분할! // The smaller the number - the much closer spline should be
 	var bezierCurves = fitCurve(points, error);
-	// bezierCurves[0] === [[0, 0], [20.27317402, 20.27317402], [-1.24665147, 0], [20, 0]]
 	console.log(bezierCurves);
 
 	var csv = "Duration,x^0,x^1,x^2,x^3,x^4,x^5,x^6,x^7,y^0,y^1,y^2,y^3,y^4,y^5,y^6,y^7,z^0,z^1,z^2,z^3,z^4,z^5,z^6,z^7,yaw^0,yaw^1,yaw^2,yaw^3,yaw^4,yaw^5,yaw^6,yaw^7\r\n";
@@ -382,7 +379,7 @@ function traj_csv() {
 			cp[i].y = cp[i][1];
 			cp[i].z = cp[i][2];
 			cp[i].w = cp[i][3]; // yaw
-			cp[i].t = cp[i][4].toFixed(5); // time
+			cp[i].t = cp[i][4]; // time
 		}
 
 		// http://blog.naver.com/kyuniitale/40022945907
