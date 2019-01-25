@@ -110,14 +110,15 @@ Knot = THREE.Curve.create(
 init();
 animate();
 
+var SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT = window.innerHeight;
+var VIEW_ANGLE = 45, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 0.1, FAR = 20000;
+
 // FUNCTIONS 		
 function init() 
 {
 	// SCENE
 	scene = new THREE.Scene();
 	// CAMERA
-	var SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT = window.innerHeight;
-	var VIEW_ANGLE = 45, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 0.1, FAR = 20000;
 	camera = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR);
 	scene.add(camera);
 	// RENDERER
@@ -140,8 +141,14 @@ function init()
 	// SKYBOX/FOG
 	scene.fog = new THREE.FogExp2( 0x888888, 0.0025 );
 
-	var pcamera = new THREE.PerspectiveCamera( 45, 200 / 200 , 1, 1000 );
+	var pcamera;// = new THREE.PerspectiveCamera( 45, 200 / 200 , 1, 1000 );
+	pcamera = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR);
+	THREEx.WindowResize(renderer, pcamera);
+	pcamera.position.set( 0, -9, 0 );
+	pcamera.up = new THREE.Vector3( 0, 0, 1 );
+	pcamera.lookAt(scene.position);
 	scene.add( pcamera );
+
 
 	////////////
 	// CUSTOM //
@@ -493,7 +500,15 @@ function update()
 
 function render() 
 {
+	renderer.setViewport(0,0,SCREEN_WIDTH,SCREEN_HEIGHT);
+	//renderer.setScissorTest(false);
 	renderer.render( scene, camera );
+
+	renderer.setViewport(0,0,100,100);
+	//renderer.setScissor(0,0,100,100);
+	//renderer.setScissorTest(true);
+	pcamera.updateProjectionMatrix();
+	renderer.render( scene, pcamera );
 }
 
 
