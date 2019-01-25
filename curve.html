@@ -139,6 +139,10 @@ function init()
 	scene.add(light);
 	// SKYBOX/FOG
 	scene.fog = new THREE.FogExp2( 0x888888, 0.0025 );
+
+	var pcamera = new THREE.PerspectiveCamera( 45, 200 / 200 , 1, 1000 );
+	scene.add( pcamera );
+
 	////////////
 	// CUSTOM //
 	////////////
