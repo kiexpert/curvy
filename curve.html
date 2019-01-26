@@ -379,7 +379,7 @@ function traj_csv() {
 	for(var t = tMin; t <= tMax; t += dt)
 		points.push([xFunc(t), yFunc(t), zFunc(t), yawFunc(t), t]);
 
-	var error = 0.0001; // 1mm 이하의 정확도로 분할! // The smaller the number - the much closer spline should be
+	var error = 0.01; // 1mm 이하의 정확도로 분할! // The smaller the number - the much closer spline should be
 	var bezierCurves = fitCurve(points, error);
 	console.log(bezierCurves);
 
