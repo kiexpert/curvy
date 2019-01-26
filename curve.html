@@ -398,6 +398,7 @@ function traj_csv() {
 
 		// http://blog.naver.com/kyuniitale/40022945907
 		var ax, bx, cx, ay, by, cy, az, bz, cz, aw, bw, cw, tSquared, tCubed;
+		
 		/* 다항식 계수를 계산한다 */
 		cx = 3.0 * (cp[1].x - cp[0].x);
 		bx = 3.0 * (cp[2].x - cp[1].x) - cx;
@@ -424,14 +425,26 @@ function traj_csv() {
 		//tCubed = tSquared * t;
 		// x = (ax * tCubed) + (bx * tSquared) + (cx * t) + cp[0].x;
 		// y = (ay * tCubed) + (bx * tSquared) + (cy * t) + cp[0].y;
-		csv += (cp[3].t - cp[0].t).toFixed(4);
-		csv += ',' + cp[0].x.toFixed(4) + ',' + cx.toFixed(4) + ',' + bx.toFixed(4) + ',' + ax.toFixed(4) + ',0,0,0,0';
-		csv += ',' + cp[0].y.toFixed(4) + ',' + cy.toFixed(4) + ',' + by.toFixed(4) + ',' + ay.toFixed(4) + ',0,0,0,0';
-		csv += ',' + cp[0].z.toFixed(4) + ',' + cz.toFixed(4) + ',' + bz.toFixed(4) + ',' + az.toFixed(4) + ',0,0,0,0';
-		csv += ',' + cp[0].w.toFixed(4) + ',' + cw.toFixed(4) + ',' + bw.toFixed(4) + ',' + aw.toFixed(4) + ',0,0,0,0';
+
+		t = cp[0].t;
+		if(cp[0].x!=xFunc(t)) console.log("x value missmatch! x0="+xFunc(t)+", cx="+cp[0].x+", t="+t);
+		if(cp[0].y!=yFunc(t)) console.log("y value missmatch! y0="+yFunc(t)+", cy="+cp[0].y+", t="+t);
+		if(cp[0].z!=zFunc(t)) console.log("z value missmatch! z0="+zFunc(t)+", cz="+cp[0].z+", t="+t);
+		if(cp[0].w!=yawFunc(t)) console.log("w value missmatch! w0="+yawFunc(t)+", cw="+cp[0].w+", t="+t);
+
+		var prec = 9;
+		csv += (cp[3].t - cp[0].t).toFixed(prec);
+		csv += ',' + cp[0].x.toFixed(prec) + ',' + cx.toFixed(prec) + ',' + bx.toFixed(prec) + ',' + ax.toFixed(prec) + ',0,0,0,0';
+		csv += ',' + cp[0].y.toFixed(prec) + ',' + cy.toFixed(prec) + ',' + by.toFixed(prec) + ',' + ay.toFixed(prec) + ',0,0,0,0';
+		csv += ',' + cp[0].z.toFixed(prec) + ',' + cz.toFixed(prec) + ',' + bz.toFixed(prec) + ',' + az.toFixed(prec) + ',0,0,0,0';
+		csv += ',' + cp[0].w.toFixed(prec) + ',' + cw.toFixed(prec) + ',' + bw.toFixed(prec) + ',' + aw.toFixed(prec) + ',0,0,0,0';
 		csv += '\r\n';
 
 		t = cp[3].t;
+		if(cp[0].x!=xFunc(t)) console.log("x value missmatch! x1="+xFunc(t)+", cx="+cp[0].x+", t="+t);
+		if(cp[0].y!=yFunc(t)) console.log("y value missmatch! y1="+yFunc(t)+", cy="+cp[0].y+", t="+t);
+		if(cp[0].z!=zFunc(t)) console.log("z value missmatch! z1="+zFunc(t)+", cz="+cp[0].z+", t="+t);
+		if(cp[0].w!=yawFunc(t)) console.log("w value missmatch! w1="+yawFunc(t)+", cw="+cp[0].w+", t="+t);
 	}
 
 	return csv;
