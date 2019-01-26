@@ -4,6 +4,10 @@
 	<title>UAV Trajectory Generator (Three.js)</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<META HTTP-EQUIV=”Expires” CONTENT=”Mon, 06 Jan 1990 00:00:01 GMT”>
+	<META HTTP-EQUIV=”Expires” CONTENT=”-1″>
+	<META HTTP-EQUIV=”Pragma” CONTENT=”no-cache”>
+	<META HTTP-EQUIV=”Cache-Control” CONTENT=”no-cache”>
 	<link rel=stylesheet href="css/base.css"/>
 </head> 
 <body>
@@ -379,7 +383,7 @@ function traj_csv() {
 	for(var t = tMin; t <= tMax; t += dt)
 		points.push([xFunc(t), yFunc(t), zFunc(t), yawFunc(t), t]);
 
-	var error = 0.01; // 1mm 이하의 정확도로 분할! // The smaller the number - the much closer spline should be
+	var error = 0.001; // 1mm 이하의 정확도로 분할! // The smaller the number - the much closer spline should be
 	var bezierCurves = fitCurve(points, error);
 	console.log(bezierCurves);
 
