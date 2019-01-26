@@ -400,17 +400,19 @@ function traj_csv() {
 			cp[i].t = cp[i][4]; // time
 		}
 
+		var d, wFunc = yawFunc;
+
 		t = cp[0].t;
-		cp[0].x = xFunc(t);
-		cp[0].y = yFunc(t);
-		cp[0].z = zFunc(t);
-		cp[0].w = yawFunc(t);
+		d = cp[0].x - xFunc(t), cp[0].x -= d, cp[1].x -= d;
+		d = cp[0].y - yFunc(t), cp[0].y -= d, cp[1].y -= d;
+		d = cp[0].z - zFunc(t), cp[0].z -= d, cp[1].z -= d;
+		d = cp[0].w - wFunc(t), cp[0].w -= d, cp[1].w -= d;
 
 		t = cp[3].t;
-		cp[3].x = xFunc(t);
-		cp[3].y = yFunc(t);
-		cp[3].z = zFunc(t);
-		cp[3].w = yawFunc(t);
+		d = cp[3].x - xFunc(t), cp[3].x -= d, cp[2].x -= d;
+		d = cp[3].y - yFunc(t), cp[3].y -= d, cp[2].y -= d;
+		d = cp[3].z - zFunc(t), cp[3].z -= d, cp[2].z -= d;
+		d = cp[3].w - wFunc(t), cp[3].w -= d, cp[2].w -= d;
 
 		// http://blog.naver.com/kyuniitale/40022945907
 		var ax, bx, cx, ay, by, cy, az, bz, cz, aw, bw, cw, tSquared, tCubed;
@@ -446,7 +448,7 @@ function traj_csv() {
 		if(cp[0].x!=xFunc(t)) console.log("x value missmatch! x0="+xFunc(t)+", cx="+cp[0].x+", t="+t);
 		if(cp[0].y!=yFunc(t)) console.log("y value missmatch! y0="+yFunc(t)+", cy="+cp[0].y+", t="+t);
 		if(cp[0].z!=zFunc(t)) console.log("z value missmatch! z0="+zFunc(t)+", cz="+cp[0].z+", t="+t);
-		if(cp[0].w!=yawFunc(t)) console.log("w value missmatch! w0="+yawFunc(t)+", cw="+cp[0].w+", t="+t);
+		if(cp[0].w!=wFunc(t)) console.log("w value missmatch! w0="+wFunc(t)+", cw="+cp[0].w+", t="+t);
 
 		var prec = 9;
 		csv += (cp[3].t - cp[0].t).toFixed(prec);
@@ -460,7 +462,7 @@ function traj_csv() {
 		if(cp[3].x!=xFunc(t)) console.log("x value missmatch! x1="+xFunc(t)+", cx="+cp[3].x+", t="+t);
 		if(cp[3].y!=yFunc(t)) console.log("y value missmatch! y1="+yFunc(t)+", cy="+cp[3].y+", t="+t);
 		if(cp[3].z!=zFunc(t)) console.log("z value missmatch! z1="+zFunc(t)+", cz="+cp[3].z+", t="+t);
-		if(cp[3].w!=yawFunc(t)) console.log("w value missmatch! w1="+yawFunc(t)+", cw="+cp[3].w+", t="+t);
+		if(cp[3].w!=wFunc(t)) console.log("w value missmatch! w1="+wFunc(t)+", cw="+cp[3].w+", t="+t);
 	}
 
 	return csv;
