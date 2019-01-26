@@ -400,6 +400,18 @@ function traj_csv() {
 			cp[i].t = cp[i][4]; // time
 		}
 
+		t = cp[0].t;
+		cp[0].x = xFunc(t);
+		cp[0].y = yFunc(t);
+		cp[0].z = zFunc(t);
+		cp[0].w = yawFunc(t);
+
+		t = cp[3].t;
+		cp[3].x = xFunc(t);
+		cp[3].y = yFunc(t);
+		cp[3].z = zFunc(t);
+		cp[3].w = yawFunc(t);
+
 		// http://blog.naver.com/kyuniitale/40022945907
 		var ax, bx, cx, ay, by, cy, az, bz, cz, aw, bw, cw, tSquared, tCubed;
 		
@@ -445,10 +457,10 @@ function traj_csv() {
 		csv += '\r\n';
 
 		t = cp[3].t;
-		if(cp[0].x!=xFunc(t)) console.log("x value missmatch! x1="+xFunc(t)+", cx="+cp[0].x+", t="+t);
-		if(cp[0].y!=yFunc(t)) console.log("y value missmatch! y1="+yFunc(t)+", cy="+cp[0].y+", t="+t);
-		if(cp[0].z!=zFunc(t)) console.log("z value missmatch! z1="+zFunc(t)+", cz="+cp[0].z+", t="+t);
-		if(cp[0].w!=yawFunc(t)) console.log("w value missmatch! w1="+yawFunc(t)+", cw="+cp[0].w+", t="+t);
+		if(cp[3].x!=xFunc(t)) console.log("x value missmatch! x1="+xFunc(t)+", cx="+cp[3].x+", t="+t);
+		if(cp[3].y!=yFunc(t)) console.log("y value missmatch! y1="+yFunc(t)+", cy="+cp[3].y+", t="+t);
+		if(cp[3].z!=zFunc(t)) console.log("z value missmatch! z1="+zFunc(t)+", cz="+cp[3].z+", t="+t);
+		if(cp[3].w!=yawFunc(t)) console.log("w value missmatch! w1="+yawFunc(t)+", cw="+cp[3].w+", t="+t);
 	}
 
 	return csv;
