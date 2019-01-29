@@ -82,7 +82,7 @@ var playSpeed = 4; // 1X play.
 
 // how many sides the tube cross-section has
 var radiusSegments = 6;
-var tubeRadius = 0.1;
+var tubeRadius = 0.02;
 
 //var tMin = -2.12, tMax = 1.12, tRange = tMax - tMin;
 var tMin = 0, tMax = 10, tRange = tMax - tMin;
@@ -203,13 +203,13 @@ function init()
 				updateCamera: function ( camera, scene, mouseX ) {
 					camera.position.x = xFunc(tCurrent);
 					camera.position.y = yFunc(tCurrent);
-					camera.position.z = zFunc(tCurrent);
+					camera.position.z = zFunc(tCurrent) + 9;
 
 					var yaw = yawFunc(tCurrent);
 					camera.up.fromArray([Math.cos(yaw), Math.sin(yaw), 0]);
 
 					var dnpos = camera.position.clone();
-					dnpos.z -= 1;
+					dnpos.z = 0;
 					camera.lookAt(dnpos);
 				}
 			},
@@ -230,8 +230,8 @@ function init()
 					//camera.lookAt( camera.position.clone().setY( 0 ) );
 					var yaw = yawFunc(tCurrent);
 					var fwpos = camera.position.clone();
-					fwpos.x += Math.cos(yaw);
-					fwpos.y += Math.sin(yaw);
+					camera.position.x -= 9*Math.cos(yaw);
+					camera.position.y -= 9*Math.sin(yaw);
 					camera.lookAt(fwpos);
 				}
 			}
@@ -627,18 +627,18 @@ function preset01()
 		
 function resetCamera()
 {
-	return;
+	//return;
 	// CAMERA
 	var SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT = window.innerHeight;
 	var VIEW_ANGLE = 45, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 0.1, FAR = 5000;
-	camera = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR);
+	//camera = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR);
 	camera.position.set( 2*xMax, 0.5*yMax, 4*zMax );
 	camera.up = new THREE.Vector3( 0, 0, 1 );
 	camera.lookAt(scene.position);	
-	scene.add(camera);
+	//scene.add(camera);
 	
 	controls = new THREE.TrackballControls( camera, renderer.domElement );
-	THREEx.WindowResize(renderer, camera);
+	//THREEx.WindowResize(renderer, camera);
 }
 
 function animate() 
@@ -667,6 +667,7 @@ function updateSize() {
 		renderer.setSize( windowWidth, windowHeight );
 	}
 }
+window.addEventListener('resize', updateSize, false);
 
 function render() {
 
