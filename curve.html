@@ -58,19 +58,48 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/1.7.0/math.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.4/raphael-min.js"></script>
 
+	<div id="ThreeJS" style="position:absolute; left:0px; top:0px; margin:0px; overflow:hidden;"></div>
+
+<script>
+// ========================= GLOBAL VARS ================ //
+var autoUpdate = true;
+
+var myKnot;
+var tubeMeshWire, tubeMeshSolid;
+
+// extrusion segments -- how many sample points to take along curve.
+var timeres = 100;
+var playSpeed = 4; // 1X play.
+var numDrones = 3;
+var safeDistance = 20;
+
+// how many sides the tube cross-section has
+var radiusSegments = 6;
+var tubeRadius = 0.02;
+
+var tMin = 0, tMax = 10, tRange = tMax - tMin;
+var xFuncText = "0.1*t*cos(3.14*0.4*t) + i*0.3";//"t^2 - 3*t";
+var yFuncText = "0.1*t*sin(3.14*0.4*t) + i*0.3"; //"t^2 - 4*t^2";
+var zFuncText = "0.1*t"; //"(t^5 - 10*t)/5";
+var yawFuncText = "t / 10 * 3.1415926";
+var xFunc = Parser.parse(xFuncText).toJSFunction(['t']);
+var yFunc = Parser.parse(yFuncText).toJSFunction(['t']);
+var zFunc = Parser.parse(zFuncText).toJSFunction(['t']);
+var yawFunc = Parser.parse(yawFuncText).toJSFunction(['t']);
+
+var xMin = xMax = yMin = yMax = zMin = zMax = 0; // for autosizing window
+</script>
+
 	<script src="./fit-curve.js"></script>
 	<script src="./make-safe-beziers.js"></script>
+	<script src="./make-graph.js"></script>
+	<script src="./make-csv.js"></script>
+	<script src="./dron-views.js"></script>
+
 	<!-- script src="https://requirejs.org/docs/release/2.3.6/minified/require.js"></script -->
 
 	<!---------------------------------------------------------------->
-	<div id="ThreeJS" style="position: absolute; left:0px; top:0px"></div>
 	<script>
-		/*
-			Three.js "tutorials by example"
-			Author: Lee Stemkoski
-			Date: July 2013 (three.js v59dev)
-		*/
-
 		// MAIN
 
 		// standard global variables
@@ -85,171 +114,12 @@
 			gui_segments, gui_radiusSegments, gui_tubeRadius;
 		var gui_numDrones, gui_safeDistance;
 
-		var autoUpdate = true;
-
-		var myKnot;
-		var tubeMeshWire, tubeMeshSolid;
-
-		// extrusion segments -- how many sample points to take along curve.
-		var timeres = 100;
-		var playSpeed = 4; // 1X play.
-		var numDrones = 3;
-		var safeDistance = 20;
-
-		// how many sides the tube cross-section has
-		var radiusSegments = 6;
-		var tubeRadius = 0.02;
-
-		//var tMin = -2.12, tMax = 1.12, tRange = tMax - tMin;
-		var tMin = 0, tMax = 10, tRange = tMax - tMin;
-
-		var xFuncText = "0.1*t*cos(3.14*0.4*t) + i*0.3";//"t^2 - 3*t";
-		var yFuncText = "0.1*t*sin(3.14*0.4*t) + i*0.3"; //"t^2 - 4*t^2";
-		var zFuncText = "0.1*t"; //"(t^5 - 10*t)/5";
-		var yawFuncText = "t / 10 * 3.1415926";
-		var xFunc = Parser.parse(xFuncText).toJSFunction(['t']);
-		var yFunc = Parser.parse(yFuncText).toJSFunction(['t']);
-		var zFunc = Parser.parse(zFuncText).toJSFunction(['t']);
-		var yawFunc = Parser.parse(yawFuncText).toJSFunction(['t']);
-
-		var xMin = xMax = yMin = yMax = zMin = zMax = 0; // for autosizing window
-
-		var graphMesh, wireMaterial;
-
-		init();
-		animate();
-
-		var windowWidth, windowHeight, views;
-		var dronFwCam, dronDnCam;
-
 		// FUNCTIONS 		
 		function init() {
 			// SCENE
 			scene = new THREE.Scene();
 			// CAMERA
-			if (true) {
-				views = [
-					{
-						left: 0.2,
-						top: 0,
-						width: 0.8,
-						height: 1.0,
-						background: new THREE.Color(0.5, 0.5, 0.7),
-						eye: [0, -19, 1.5],
-						up: [0, 1, 0],
-						fov: 30,
-						updateCamera: function (camera, scene, mouseX) {
-							//camera.position.x += mouseX * 0.05;
-							//camera.position.x = Math.max( Math.min( camera.position.x, 2000 ), - 2000 );
-							//camera.lookAt( scene.position );
-						}
-					},
-					{
-						left: 0.0,
-						top: 0.0,
-						width: 0.2,
-						height: 0.2,
-						background: new THREE.Color(0.7, 0.5, 0.5),
-						eye: [-9, 0, 1.5],
-						up: [0, 0, 1],
-						fov: 45,
-						updateCamera: function (camera, scene, mouseX) {
-							//camera.position.x -= mouseX * 0.05;
-							//camera.position.x = Math.max( Math.min( camera.position.x, 2000 ), - 2000 );
-							//camera.lookAt( camera.position.clone().setY( 0 ) );
-
-						}
-					},
-					{
-						left: 0.0,
-						top: 0.2,
-						width: 0.2,
-						height: 0.2,
-						background: new THREE.Color(0.7, 0.5, 0.5),
-						eye: [0, -9, 1.5],
-						up: [0, 0, 1],
-						fov: 45,
-						updateCamera: function (camera, scene, mouseX) {
-							//camera.position.x -= mouseX * 0.05;
-							//camera.position.x = Math.max( Math.min( camera.position.x, 2000 ), - 2000 );
-							//camera.lookAt( camera.position.clone().setY( 0 ) );
-
-						}
-					},
-					{
-						left: 0.0,
-						top: 0.4,
-						width: 0.2,
-						height: 0.2,
-						background: new THREE.Color(0.7, 0.5, 0.5),
-						eye: [0, 0, 9],
-						up: [0, 1, 0],
-						fov: 45,
-						updateCamera: function (camera, scene, mouseX) {
-							//camera.position.x -= mouseX * 0.05;
-							//camera.position.x = Math.max( Math.min( camera.position.x, 2000 ), - 2000 );
-							//camera.lookAt( camera.position.clone().setY( 0 ) );
-
-						}
-					},
-					{
-						left: 0.0,
-						top: 0.6,
-						width: 0.2,
-						height: 0.2,
-						background: new THREE.Color(0.7, 0.5, 0.5),
-						eye: [0, -9, 0],
-						up: [0, 1, 0],
-						fov: 45,
-						updateCamera: function (camera, scene, mouseX) {
-							camera.position.x = xFunc(tCurrent, 0);
-							camera.position.y = yFunc(tCurrent, 0);
-							camera.position.z = zFunc(tCurrent, 0) + 9;
-
-							var yaw = yawFunc(tCurrent, 0);
-							camera.up.fromArray([Math.cos(yaw), Math.sin(yaw), 0]);
-
-							var dnpos = camera.position.clone();
-							dnpos.z = 0;
-							camera.lookAt(dnpos);
-						}
-					},
-					{
-						left: 0.0,
-						top: 0.8,
-						width: 0.2,
-						height: 0.2,
-						background: new THREE.Color(0.7, 0.5, 0.5),
-						eye: [0, -9, 0],
-						up: [0, 0, 1],
-						fov: 45,
-						updateCamera: function (camera, scene, mouseX) {
-							camera.position.x = xFunc(tCurrent, 0);
-							camera.position.y = yFunc(tCurrent, 0);
-							camera.position.z = zFunc(tCurrent, 0);
-
-							//camera.lookAt( camera.position.clone().setY( 0 ) );
-							var yaw = yawFunc(tCurrent, 0);
-							var fwpos = camera.position.clone();
-							camera.position.x -= 9 * Math.cos(yaw);
-							camera.position.y -= 9 * Math.sin(yaw);
-							camera.lookAt(fwpos);
-						}
-					}
-				];
-				var ii = views.length, view;
-				while (--ii >= 0) {
-					view = views[ii];
-					camera = new THREE.PerspectiveCamera(view.fov, window.innerWidth / window.innerHeight, 0.1, 1000);
-					camera.position.fromArray(view.eye);
-					camera.up.fromArray(view.up);
-					camera.lookAt(scene.position);
-					view.camera = camera;
-				}
-
-				dronFwCam = views[4];
-				dronDnCam = views[5];
-			}
+			initViews(scene);
 
 			// RENDERER
 			if (Detector.webgl)
@@ -369,6 +239,7 @@
 			gui.add(parameters, 'exportTraj').name("Export bezier.csv");
 
 			preset01();
+			requestAnimationFrame(animate);
 		}
 
 		function toggleTrajectoryLibrary() {
@@ -382,255 +253,6 @@
 
 		}
 
-
-		var graphMeshes;
-
-		function createGraph() {
-			xFunc = Parser.parse(xFuncText).toJSFunction(['t', 'i']);
-			yFunc = Parser.parse(yFuncText).toJSFunction(['t', 'i']);
-			zFunc = Parser.parse(zFuncText).toJSFunction(['t', 'i']);
-
-			makeBeziers();
-
-			while (graphMeshes && graphMeshes.length > 0) {
-				graphMesh = graphMeshes.shift();
-				scene.remove(graphMesh);
-				// renderer.deallocateObject( graphMesh );
-			}
-
-			graphMeshes = [];
-
-			for (var id = 0; id < numDrones; id++) {
-				Knot = THREE.Curve.create(
-					function () { },
-					function (t) {
-						// default:    0 < t < 1
-						//    want: tMin < t < tMax
-						t = t * tRange + tMin;
-						return new THREE.Vector3(xFunc(t, id), yFunc(t, id), zFunc(t, id)).multiplyScalar(1);
-					}
-				);
-
-				// knot stuff
-				myKnot = new Knot;
-
-				var closedTube = false; // connect the ends
-				var debug = false; // show normal vectors
-				//var segments = Math.ceil((tMax - tMin) * Math.pow(10, timeres));
-				var segments = timeres;
-				var tubeGeometry = new THREE.TubeGeometry(myKnot, segments, tubeRadius, radiusSegments, closedTube, debug);
-
-				///////////////////////////////////////////////
-				// calculate vertex colors based on T values //
-				///////////////////////////////////////////////
-				var color, point, face, numberOfSides, vertexIndex;
-				// faces are indexed using characters
-				var faceIndices = ['a', 'b', 'c', 'd'];
-				// first, assign colors to vertices as desired
-				for (var s = 0; s <= segments; s++) {
-					for (var r = 0; r < radiusSegments; r++) {
-						vertexIndex = r + s * radiusSegments;
-						color = new THREE.Color(0xffffff);
-						// according to length along curve, repeat once
-						color.setHSL((1 * s / segments) % 1, 1, 0.5);
-						// according to radius segment -- ribbons of color
-						// color.setHSV( (1 * r / radiusSegments) % 1, 1, 1 );
-						tubeGeometry.colors[vertexIndex] = color; // use this array for convenience
-					}
-				}
-				// copy the colors as necessary to the face's vertexColors array.
-				for (var i = 0; i < tubeGeometry.faces.length; i++) {
-					face = tubeGeometry.faces[i];
-					numberOfSides = (face instanceof THREE.Face3) ? 3 : 4;
-					for (var j = 0; j < numberOfSides; j++) {
-						vertexIndex = face[faceIndices[j]];
-						face.vertexColors[j] = tubeGeometry.colors[vertexIndex];
-					}
-				}
-				///////////////////////
-				// end vertex colors //
-				///////////////////////
-
-				// for auto-sizing window
-				tubeGeometry.computeBoundingBox();
-				xMin = tubeGeometry.boundingBox.min.x;
-				xMax = tubeGeometry.boundingBox.max.x;
-				yMin = tubeGeometry.boundingBox.min.y;
-				yMax = tubeGeometry.boundingBox.max.y;
-				zMin = tubeGeometry.boundingBox.min.z;
-				zMax = tubeGeometry.boundingBox.max.z;
-
-				wireMaterial.map.repeat.set(segments, radiusSegments);
-
-				graphMesh = new THREE.Mesh(tubeGeometry, wireMaterial);
-				graphMesh.doubleSided = true;
-				scene.add(graphMesh);
-
-				graphMeshes.push(graphMesh);
-			}
-		}
-
-		var dest_tMax = tMax, dest_tMin = tMin;
-		var tInterval = 0.01; // s.
-		var tCurrent = tMax;
-		var playTimerId = null;
-
-		function playGraph() {
-			if (playTimerId)
-				clearTimeout(playTimerId);
-
-			dest_tMax = tMax, dest_tMin = tMin;
-			tInterval = 0.01; // s.
-			tCurrent = tMin;
-			playTimerId = null;
-
-			console.log(playSpeed);
-			function playGraphOne() {
-				gui_tMax.setValue(tCurrent);
-				tCurrent += tInterval * playSpeed;
-				console.log("tCurrent", tCurrent, dest_tMax);
-				if (tCurrent <= dest_tMax) {
-					playTimerId = window.setTimeout(
-						playGraphOne,
-						tInterval * 1000.
-					);
-				}
-			}
-			playTimerId = window.setTimeout(
-				playGraphOne,
-				tInterval * 1000.
-			);
-		}
-
-		// export the path to csv file and download.
-		function path_csv() {
-			var xFunc = Parser.parse(xFuncText).toJSFunction(['t', 'i']);
-			var yFunc = Parser.parse(yFuncText).toJSFunction(['t', 'i']);
-			var zFunc = Parser.parse(zFuncText).toJSFunction(['t', 'i']);
-			var yawFunc = Parser.parse(yawFuncText).toJSFunction(['t', 'i']);
-			var csv = 't,x,y,z,yaw\r\n'
-			for (var t = tMin; t <= tMax; t += 1 / timeres/*Math.pow(10, timeres)*/) {
-				csv += t;
-				csv += ',' + xFunc(t, 0);
-				csv += ',' + yFunc(t, 0);
-				csv += ',' + zFunc(t, 0);
-				csv += ',' + yawFunc(t, 0);
-				csv += '\r\n';
-			}
-			return csv;
-		}
-
-		//var fitCurve = require(['./fit-curve.js']);
-
-		// export the trajectory to csv file and download.
-		function traj_csv() {
-			var xFunc = Parser.parse(xFuncText).toJSFunction(['t', 'i']);
-			var yFunc = Parser.parse(yFuncText).toJSFunction(['t', 'i']);
-			var zFunc = Parser.parse(zFuncText).toJSFunction(['t', 'i']);
-			var yawFunc = Parser.parse(yawFuncText).toJSFunction(['t', 'i']);
-			var dt = 1 / timeres;//Math.pow(10, timeres);
-			var points = [];//[[0, 0], [10, 10], [10, 0], [20, 0]];
-			var timeps = [];
-
-			for (var t = tMin; t <= tMax; t += dt)
-				points.push([xFunc(t, 0), yFunc(t, 0), zFunc(t, 0), yawFunc(t, 0), t]);
-
-			var error = 0.001; // 1mm 이하의 정확도로 분할! // The smaller the number - the much closer spline should be
-			var fittedBeziers = fitCurve(points, error);
-			console.log(fittedBeziers);
-
-			var csv = "Duration,x^0,x^1,x^2,x^3,x^4,x^5,x^6,x^7,y^0,y^1,y^2,y^3,y^4,y^5,y^6,y^7,z^0,z^1,z^2,z^3,z^4,z^5,z^6,z^7,yaw^0,yaw^1,yaw^2,yaw^3,yaw^4,yaw^5,yaw^6,yaw^7\r\n";
-
-			for (var t = tMin; fittedBeziers.length > 0;) {
-				var cp = fittedBeziers.shift();
-				var i = cp.length;
-				while (--i >= 0) {
-					cp[i].x = cp[i][0];
-					cp[i].y = cp[i][1];
-					cp[i].z = cp[i][2];
-					cp[i].w = cp[i][3]; // yaw
-					cp[i].t = cp[i][4]; // time
-				}
-
-				var d, wFunc = yawFunc;
-
-				// 실제 함수값에 근거해서 각 좌표를 보정한다.
-				t = cp[0].t;
-				d = cp[0].x - xFunc(t, 0), cp[0].x -= d, cp[1].x -= d;
-				d = cp[0].y - yFunc(t, 0), cp[0].y -= d, cp[1].y -= d;
-				d = cp[0].z - zFunc(t, 0), cp[0].z -= d, cp[1].z -= d;
-				d = cp[0].w - wFunc(t, 0), cp[0].w -= d, cp[1].w -= d;
-
-				t = cp[3].t;
-				d = cp[3].x - xFunc(t, 0), cp[3].x -= d, cp[2].x -= d;
-				d = cp[3].y - yFunc(t, 0), cp[3].y -= d, cp[2].y -= d;
-				d = cp[3].z - zFunc(t, 0), cp[3].z -= d, cp[2].z -= d;
-				d = cp[3].w - wFunc(t, 0), cp[3].w -= d, cp[2].w -= d;
-
-				// http://blog.naver.com/kyuniitale/40022945907
-				var ax, bx, cx, ay, by, cy, az, bz, cz, aw, bw, cw, tSquared, tCubed;
-
-				/* 다항식 계수를 계산한다 */
-				cx = 3.0 * (cp[1].x - cp[0].x);
-				bx = 3.0 * (cp[2].x - cp[1].x) - cx;
-				ax = cp[3].x - cp[0].x - cx - bx;
-
-				cy = 3.0 * (cp[1].y - cp[0].y);
-				by = 3.0 * (cp[2].y - cp[1].y) - cy;
-				ay = cp[3].y - cp[0].y - cy - by;
-
-				cz = 3.0 * (cp[1].z - cp[0].z);
-				bz = 3.0 * (cp[2].z - cp[1].z) - cz;
-				az = cp[3].z - cp[0].z - cz - bz;
-
-				cw = 3.0 * (cp[1].w - cp[0].w);
-				bw = 3.0 * (cp[2].w - cp[1].w) - cw;
-				aw = cp[3].w - cp[0].w - cw - bw;
-
-				//ct = 3.0 * (cp[1].t - cp[0].t);
-				//bt = 3.0 * (cp[2].t - cp[1].t) - ct;
-				//at = cp[3].t - cp[0].t - ct - bt;
-
-				/* 매개변수 값 t에서 곡선 점을 계산한다 */
-				//tSquared = t * t;
-				//tCubed = tSquared * t;
-				// x = (ax * tCubed) + (bx * tSquared) + (cx * t) + cp[0].x;
-				// y = (ay * tCubed) + (bx * tSquared) + (cy * t) + cp[0].y;
-
-				var prec = 9;
-				csv += (cp[3].t - cp[0].t).toFixed(prec);
-				csv += ',' + cp[0].x.toFixed(prec) + ',' + cx.toFixed(prec) + ',' + bx.toFixed(prec) + ',' + ax.toFixed(prec) + ',0,0,0,0';
-				csv += ',' + cp[0].y.toFixed(prec) + ',' + cy.toFixed(prec) + ',' + by.toFixed(prec) + ',' + ay.toFixed(prec) + ',0,0,0,0';
-				csv += ',' + cp[0].z.toFixed(prec) + ',' + cz.toFixed(prec) + ',' + bz.toFixed(prec) + ',' + az.toFixed(prec) + ',0,0,0,0';
-				csv += ',' + cp[0].w.toFixed(prec) + ',' + cw.toFixed(prec) + ',' + bw.toFixed(prec) + ',' + aw.toFixed(prec) + ',0,0,0,0';
-				csv += '\r\n';
-
-				t = cp[3].t;
-			}
-
-			return csv;
-		}
-
-		function exportPathCSV() {
-			var link = $("<a></a>");
-			var csv = path_csv();
-			link.attr('href', 'data:application/csv;charset=utf-8,'
-				+ encodeURIComponent(csv));
-			link.attr('download', 'path.csv');
-			link.attr('target', '_blank');
-			link[0].click();
-		}
-
-		function exportTrajCSV() {
-			var link = $("<a></a>");
-			var csv = traj_csv();
-			link.attr('href', 'data:application/csv;charset=utf-8,'
-				+ encodeURIComponent(csv));
-			link.attr('download', 'bezier.csv');
-			link.attr('target', '_blank');
-			link[0].click();
-		}
-
 		function preset01() {
 			autoUpdate = false;
 			gui_xText.setValue(xFuncText);
@@ -640,19 +262,6 @@
 			gui_segments.setValue(120);
 			createGraph(); resetCamera();
 			autoUpdate = true;
-		}
-
-		function resetCamera() {
-			window.addEventListener('resize', updateSize, false);
-
-			// CAMERA
-			camera.position.set(2 * xMax, 0.5 * yMax, 4 * zMax);
-			camera.up = new THREE.Vector3(0, 0, 1);
-			camera.lookAt(scene.position);
-			//scene.add(camera);
-
-			controls = new THREE.TrackballControls(camera, renderer.domElement);
-			//THREEx.WindowResize(renderer, camera);
 		}
 
 		function animate() {
@@ -665,50 +274,13 @@
 			if (keyboard.pressed("z")) {
 				// do something
 			}
-
 			controls.update();
 		}
 
-		function updateSize() {
-			if (windowWidth != window.innerWidth || windowHeight != window.innerHeight) {
-
-				windowWidth = window.innerWidth;
-				windowHeight = window.innerHeight;
-
-				renderer.setSize(windowWidth, windowHeight);
-			}
-		}
-
-		function render() {
-
-			updateSize();
-
-			for (var ii = 0; ii < views.length; ++ii) {
-				var view = views[ii];
-				var camera = view.camera;
-
-				view.updateCamera(camera, scene, 0, 0);
-
-				var left = Math.floor(windowWidth * view.left);
-				var top = Math.floor(windowHeight * view.top);
-				var width = Math.floor(windowWidth * view.width);
-				var height = Math.floor(windowHeight * view.height);
-
-				renderer.setViewport(left, top, width, height);
-				renderer.setScissor(left, top, width, height);
-				renderer.enableScissorTest(true);
-				renderer.setClearColor(view.background);
-
-				camera.aspect = width / height;
-				camera.updateProjectionMatrix();
-
-				renderer.render(scene, camera);
-			}
-
-		}
-
+		init();
+		
 	</script>
-
+<!--
 	<div class="visual-container">
 		<div class="visual">
 			<ul class="tab">
@@ -791,6 +363,7 @@
 
 		</div>
 	</div>
+-->
 </body>
 
 </html>
