@@ -58,7 +58,10 @@
 </head>
 <body>
 	<table border="1" style="border-color: orangered;"><td>
-	<div id="ThreeJS" style="position: inherit; left:0px; top:0px; margin:0px; overflow:hidden;"></div>
+	<div id="ThreeJS" style="margin:0px; overflow:hidden;"></div>
+	<!-- 
+		<div id="ThreeJS" style="position: inherit; left:0px; top:0px; margin:0px; overflow:hidden;"></div>
+	-->
 	</td></table>
 <script>
 // ========================= GLOBAL VARS ================ //
@@ -127,8 +130,7 @@ var xMin = xMax = yMin = yMax = zMin = zMax = 0; // for autosizing window
 			else
 				renderer = new THREE.CanvasRenderer();
 
-			window.document.body.client
-			renderer.setSize(window.innerWidth, window.innerHeight);
+			//renderer.setSize(window.innerWidth, window.innerHeight);
 			container = document.getElementById('ThreeJS');
 			container.appendChild(renderer.domElement);
 
