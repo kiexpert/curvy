@@ -1,3 +1,5 @@
+
+var viewDepth = 5;
 var views = [
     {
         left: 0.2,
@@ -5,7 +7,7 @@ var views = [
         width: 0.8,
         height: 1.0,
         background: new THREE.Color(0.5, 0.5, 0.7),
-        eye: [0, -19, 1.5],
+        eye: [0, -viewDepth, 1.5],
         up: [0, 1, 0],
         fov: 30,
         updateCamera: function (camera, scene, mouseX) {
@@ -20,7 +22,7 @@ var views = [
         width: 0.2,
         height: 0.2,
         background: new THREE.Color(0.7, 0.5, 0.5),
-        eye: [-9, 0, 1.5],
+        eye: [-viewDepth, 0, 1.5],
         up: [0, 0, 1],
         fov: 45,
         updateCamera: function (camera, scene, mouseX) {
@@ -36,7 +38,7 @@ var views = [
         width: 0.2,
         height: 0.2,
         background: new THREE.Color(0.7, 0.5, 0.5),
-        eye: [0, -9, 1.5],
+        eye: [0, -viewDepth, 1.5],
         up: [0, 0, 1],
         fov: 45,
         updateCamera: function (camera, scene, mouseX) {
@@ -52,7 +54,7 @@ var views = [
         width: 0.2,
         height: 0.2,
         background: new THREE.Color(0.7, 0.5, 0.5),
-        eye: [0, 0, 9],
+        eye: [0, 0, viewDepth],
         up: [0, 1, 0],
         fov: 45,
         updateCamera: function (camera, scene, mouseX) {
@@ -68,13 +70,13 @@ var views = [
         width: 0.2,
         height: 0.2,
         background: new THREE.Color(0.7, 0.5, 0.5),
-        eye: [0, -9, 0],
+        eye: [0, -viewDepth, 0],
         up: [0, 1, 0],
         fov: 45,
         updateCamera: function (camera, scene, mouseX) {
             camera.position.x = xFunc(tCurrent, 0);
             camera.position.y = yFunc(tCurrent, 0);
-            camera.position.z = zFunc(tCurrent, 0) + 9;
+            camera.position.z = zFunc(tCurrent, 0) + viewDepth;
 
             var yaw = yawFunc(tCurrent, 0);
             camera.up.fromArray([Math.cos(yaw), Math.sin(yaw), 0]);
@@ -90,7 +92,7 @@ var views = [
         width: 0.2,
         height: 0.2,
         background: new THREE.Color(0.7, 0.5, 0.5),
-        eye: [0, -9, 0],
+        eye: [0, -viewDepth, 0],
         up: [0, 0, 1],
         fov: 45,
         updateCamera: function (camera, scene, mouseX) {
@@ -101,8 +103,8 @@ var views = [
             //camera.lookAt( camera.position.clone().setY( 0 ) );
             var yaw = yawFunc(tCurrent, 0);
             var fwpos = camera.position.clone();
-            camera.position.x -= 9 * Math.cos(yaw);
-            camera.position.y -= 9 * Math.sin(yaw);
+            camera.position.x -= viewDepth * Math.cos(yaw);
+            camera.position.y -= viewDepth * Math.sin(yaw);
             camera.lookAt(fwpos);
         }
     }

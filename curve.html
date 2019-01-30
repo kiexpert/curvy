@@ -11,22 +11,6 @@
 	<META HTTP-EQUIV=”Cache-Control” CONTENT=”no-cache”>
 	<link rel=stylesheet href="css/base.css" />
 
-	<style>
-		body {
-			color: #000;
-			font-family:Monospace;
-			font-size:13px;
-			text-align:center;
-
-			background-color: #fff;
-			margin: 0px;
-			overflow: hidden;
-		}
-	</style>
-</head>
-
-<body>
-
 	<script src="js/Three.js"></script>
 	<script src="js/Detector.js"></script>
 	<script src="js/TrackballControls.js"></script>
@@ -48,18 +32,34 @@
 
 	<!-- Bootstrap -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
-	 crossorigin="anonymous">
+	crossorigin="anonymous">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp"
-	 crossorigin="anonymous">
+	crossorigin="anonymous">
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
-	 crossorigin="anonymous"></script>
+	crossorigin="anonymous"></script>
 
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.9.3/lodash.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/1.7.0/math.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.4/raphael-min.js"></script>
 
-	<div id="ThreeJS" style="position:absolute; left:0px; top:0px; margin:0px; overflow:hidden;"></div>
+	<style>
+		body {
+			color: #000;
+			font-family:Monospace;
+			font-size:13px;
+			text-align:center;
 
+			background-color: #fff;
+			margin: 1px;
+			overflow: hidden;
+		}
+	</style>
+	
+</head>
+<body>
+	<table border="1" style="border-color: orangered;"><td>
+	<div id="ThreeJS" style="position: inherit; left:0px; top:0px; margin:0px; overflow:hidden;"></div>
+	</td></table>
 <script>
 // ========================= GLOBAL VARS ================ //
 var autoUpdate = true;
@@ -127,6 +127,7 @@ var xMin = xMax = yMin = yMax = zMin = zMax = 0; // for autosizing window
 			else
 				renderer = new THREE.CanvasRenderer();
 
+			window.document.body.client
 			renderer.setSize(window.innerWidth, window.innerHeight);
 			container = document.getElementById('ThreeJS');
 			container.appendChild(renderer.domElement);
@@ -277,7 +278,8 @@ var xMin = xMax = yMin = yMax = zMin = zMax = 0; // for autosizing window
 			controls.update();
 		}
 
-		init();
+		setTimeout(init, 0);
+		//init();
 		
 	</script>
 <!--
