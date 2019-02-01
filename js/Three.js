@@ -19845,13 +19845,15 @@ THREE.WebGLRenderer = function ( parameters ) {
 		_viewportWidth = width !== undefined ? width : _canvas.width;
 		_viewportHeight = height !== undefined ? height : _canvas.height;
 
-		_gl.viewport( _viewportX, _viewportY, _viewportWidth, _viewportHeight );
+		var s = devicePixelRatio;
+		_gl.viewport( _viewportX * s, _viewportY * s, _viewportWidth * s, _viewportHeight * s );
 
 	};
 
 	this.setScissor = function ( x, y, width, height ) {
 
-		_gl.scissor( x, y, width, height );
+		var s = devicePixelRatio;
+		_gl.scissor( x * s, y * s, width * s, height * s );
 
 	};
 

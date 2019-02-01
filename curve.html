@@ -11,7 +11,7 @@
 	<META HTTP-EQUIV=”Cache-Control” CONTENT=”no-cache”>
 	<link rel=stylesheet href="css/base.css" />
 
-	<script src="js/Three.js"></script>
+	<script src="js/Three.js?v=2"></script>
 	<script src="js/Detector.js"></script>
 	<script src="js/TrackballControls.js"></script>
 	<script src="js/THREEx.KeyboardState.js"></script>
@@ -57,12 +57,12 @@
 	
 </head>
 <body>
-	<table border="1" style="border-color: orangered;"><td>
-	<div id="ThreeJS" style="margin:0px; overflow:hidden;"></div>
-	<!-- 
-		<div id="ThreeJS" style="position: inherit; left:0px; top:0px; margin:0px; overflow:hidden;"></div>
-	-->
-	</td></table>
+	<div style="position: absolute; left:0px; top:0px; margin:5px; overflow:hidden;">
+		<a href="./curve.html" id=info>
+			Loading...
+		</a>
+	</div>
+	<div id="ThreeJS" style="margin:0px; overflow:hidden; background-color: gray;"></div>
 <script>
 // ========================= GLOBAL VARS ================ //
 var autoUpdate = true;
@@ -81,7 +81,7 @@ var radiusSegments = 6;
 var tubeRadius = 0.02;
 
 var tMin = 0, tMax = 10, tRange = tMax - tMin;
-var xFuncText = "0.1*t*cos(3.14*0.4*t) + i*0.3";//"t^2 - 3*t";
+var xFuncText = "0.1*t*cos(3.14*0.4*t) + i*0.3"; //"t^2 - 3*t";
 var yFuncText = "0.1*t*sin(3.14*0.4*t) + i*0.3"; //"t^2 - 4*t^2";
 var zFuncText = "0.1*t"; //"(t^5 - 10*t)/5";
 var yawFuncText = "t / 10 * 3.1415926";
@@ -91,14 +91,30 @@ var zFunc = Parser.parse(zFuncText).toJSFunction(['t']);
 var yawFunc = Parser.parse(yawFuncText).toJSFunction(['t']);
 
 var xMin = xMax = yMin = yMax = zMin = zMax = 0; // for autosizing window
+
+var infoElm = document.getElementById('info');
+
+document.onerror = function(e) {
+	alert("Error!!:\n" + e);
+	infoElm.innerText = e;
+};
+
+// 자주 변경되는 js들의 캐싱 방지 장치...
+var myScripts = [
+	"./fit-curve.js",
+	"./make-safe-beziers.js",
+	"./make-graph.js",
+	"./make-csv.js",
+	"./make-views.js"
+];
+
+var q = '?t=' + Math.random();
+var tags = '<script src="'
+	+ myScripts.join(q + '"></' + 'script>\n<script src="') + q
+	+ '"><' + '/script>';
+document.write(tags);
+
 </script>
-
-	<script src="./fit-curve.js"></script>
-	<script src="./make-safe-beziers.js"></script>
-	<script src="./make-graph.js"></script>
-	<script src="./make-csv.js"></script>
-	<script src="./make-views.js"></script>
-
 	<!-- script src="https://requirejs.org/docs/release/2.3.6/minified/require.js"></script -->
 
 	<!---------------------------------------------------------------->
@@ -168,7 +184,8 @@ var xMin = xMax = yMin = yMax = zMin = zMax = 0; // for autosizing window
 			wireMaterial = new THREE.MeshBasicMaterial({ map: wireTexture, vertexColors: THREE.VertexColors, side: THREE.DoubleSide });
 
 			// Background clear color
-			renderer.setClearColorHex(0xeeeeee, 1);
+			renderer.setClearColorHex(0x000000, 1);
+			requestAnimationFrame(animate);
 
 			///////////////////
 			//   GUI SETUP   //	
@@ -242,7 +259,6 @@ var xMin = xMax = yMin = yMax = zMin = zMax = 0; // for autosizing window
 			gui.add(parameters, 'exportTraj').name("Export bezier.csv");
 
 			preset01();
-			requestAnimationFrame(animate);
 		}
 
 		function toggleTrajectoryLibrary() {
@@ -281,7 +297,6 @@ var xMin = xMax = yMin = yMax = zMin = zMax = 0; // for autosizing window
 		}
 
 		setTimeout(init, 0);
-		//init();
 		
 	</script>
 <!--

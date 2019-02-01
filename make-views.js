@@ -6,7 +6,7 @@ var views = [
         top: 0,
         width: 0.8,
         height: 1.0,
-        background: new THREE.Color(0.5, 0.5, 0.7),
+        //background: new THREE.Color(0.5, 0.5, 0.7),
         eye: [0, -viewDepth, 1.5],
         up: [0, 1, 0],
         fov: 30,
@@ -15,13 +15,15 @@ var views = [
             //camera.position.x = Math.max( Math.min( camera.position.x, 2000 ), - 2000 );
             //camera.lookAt( scene.position );
         }
-    },
+    }
+    //*
+    ,
     {
         left: 0.0,
         top: 0.0,
-        width: 0.2,
-        height: 0.2,
-        background: new THREE.Color(0.7, 0.5, 0.5),
+        width: 0.198,
+        height: 0.195,
+        //background: new THREE.Color(0.7, 0.5, 0.5),
         eye: [-viewDepth, 0, 1.5],
         up: [0, 0, 1],
         fov: 45,
@@ -35,9 +37,9 @@ var views = [
     {
         left: 0.0,
         top: 0.2,
-        width: 0.2,
-        height: 0.2,
-        background: new THREE.Color(0.7, 0.5, 0.5),
+        width: 0.198,
+        height: 0.195,
+        //background: new THREE.Color(0.7, 0.5, 0.5),
         eye: [0, -viewDepth, 1.5],
         up: [0, 0, 1],
         fov: 45,
@@ -51,9 +53,9 @@ var views = [
     {
         left: 0.0,
         top: 0.4,
-        width: 0.2,
-        height: 0.2,
-        background: new THREE.Color(0.7, 0.5, 0.5),
+        width: 0.198,
+        height: 0.195,
+        //background: new THREE.Color(0.7, 0.5, 0.5),
         eye: [0, 0, viewDepth],
         up: [0, 1, 0],
         fov: 45,
@@ -67,9 +69,9 @@ var views = [
     {
         left: 0.0,
         top: 0.6,
-        width: 0.2,
-        height: 0.2,
-        background: new THREE.Color(0.7, 0.5, 0.5),
+        width: 0.198,
+        height: 0.195,
+        //background: new THREE.Color(0.7, 0.5, 0.5),
         eye: [0, -viewDepth, 0],
         up: [0, 1, 0],
         fov: 45,
@@ -89,9 +91,9 @@ var views = [
     {
         left: 0.0,
         top: 0.8,
-        width: 0.2,
-        height: 0.2,
-        background: new THREE.Color(0.7, 0.5, 0.5),
+        width: 0.198,
+        height: 0.195,
+        //background: new THREE.Color(0.7, 0.5, 0.5),
         eye: [0, -viewDepth, 0],
         up: [0, 0, 1],
         fov: 45,
@@ -108,9 +110,23 @@ var views = [
             camera.lookAt(fwpos);
         }
     }
+    // */
 ];
 
 var dronFwCam, dronDnCam;
+var windowWidth = 0, windowHeight = 0;
+
+function resizeViews() {
+    if (windowWidth != window.innerWidth || windowHeight != window.innerHeight) {
+        windowWidth = window.innerWidth;
+        windowHeight = window.innerHeight;
+
+        //renderer.setPixelRatio( window.devicePixelRatio );
+        renderer.setSize(windowWidth, windowHeight);
+
+        infoElm.innerText = windowWidth + 'x' + windowHeight + ' [' + renderer.devicePixelRatio +']';
+    }
+}
 
 function initViews(scene)
 {
@@ -124,13 +140,12 @@ function initViews(scene)
         view.camera = camera;
     }
     
-    dronFwCam = views[4];
-    dronDnCam = views[5];
+    camera = views[0].camera;
+    dronFwCam = views[4].camera;
+    dronDnCam = views[5].camera;
 
-    window.addEventListener('resize', updateSize, false);
+    window.addEventListener('resize', resizeViews, false);
 }
-
-var windowWidth, windowHeight;
 
 function resetCamera() {
     // CAMERA
@@ -143,23 +158,14 @@ function resetCamera() {
     //THREEx.WindowResize(renderer, camera);
 }
 
-function updateSize() {
-    if (windowWidth != window.innerWidth || windowHeight != window.innerHeight) {
-
-        windowWidth = window.innerWidth;
-        windowHeight = window.innerHeight;
-
-        renderer.setSize(windowWidth, windowHeight);
-    }
-}
-
 function render() {
 
-    updateSize();
+    resizeViews();
 
     for (var ii = 0; ii < views.length; ++ii) {
         var view = views[ii];
         var camera = view.camera;
+        scene.add(camera);
 
         view.updateCamera(camera, scene, 0, 0);
 
@@ -171,7 +177,8 @@ function render() {
         renderer.setViewport(left, top, width, height);
         renderer.setScissor(left, top, width, height);
         renderer.enableScissorTest(true);
-        renderer.setClearColor(view.background);
+        //renderer.setClearColor(view.background);
+        renderer.setClearColor(0x000000);
 
         camera.aspect = width / height;
         camera.updateProjectionMatrix();
