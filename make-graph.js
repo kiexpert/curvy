@@ -13,8 +13,12 @@ function createGraph() {
         scene.remove(graphMesh);
         // renderer.deallocateObject( graphMesh );
     }
+    xMin = 0, xMax = 1;
+    yMin = 0, yMax = 1;
+    zMin = 0, zMax = 1;
 
     graphMeshes = [];
+    //return;
 
     for (var id = 0; id < numDrones; id++) {
         Knot = THREE.Curve.create(
@@ -69,12 +73,12 @@ function createGraph() {
 
         // for auto-sizing window
         tubeGeometry.computeBoundingBox();
-        xMin = tubeGeometry.boundingBox.min.x;
-        xMax = tubeGeometry.boundingBox.max.x;
-        yMin = tubeGeometry.boundingBox.min.y;
-        yMax = tubeGeometry.boundingBox.max.y;
-        zMin = tubeGeometry.boundingBox.min.z;
-        zMax = tubeGeometry.boundingBox.max.z;
+        xMin = Math.min(xMin, tubeGeometry.boundingBox.min.x);
+        xMax = Math.max(xMax, tubeGeometry.boundingBox.max.x);
+        yMin = Math.min(yMin, tubeGeometry.boundingBox.min.y);
+        yMax = Math.max(yMax, tubeGeometry.boundingBox.max.y);
+        zMin = Math.min(zMin, tubeGeometry.boundingBox.min.z);
+        zMax = Math.max(zMax, tubeGeometry.boundingBox.max.z);
 
         wireMaterial.map.repeat.set(segments, radiusSegments);
 
@@ -92,8 +96,11 @@ var tCurrent = tMax;
 var playTimerId = null;
 
 function playGraph() {
-    if (playTimerId)
+    if (playTimerId) {
         clearTimeout(playTimerId);
+        tMin = dest_tMin;
+        tMax = dest_tMax;
+    }
 
     dest_tMax = tMax, dest_tMin = tMin;
     tInterval = 0.01; // s.
