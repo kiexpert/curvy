@@ -45,7 +45,7 @@ function updateGraph(dronBeziers, tCur)
                     continue;
                 }
                 scene.remove(bz.mesh);
-                bz.mesh = null;
+                //bz.mesh = null;
             }
 
             Knot = THREE.Curve.create(
@@ -67,7 +67,7 @@ function updateGraph(dronBeziers, tCur)
             var closedTube = false; // connect the ends
             var debug = false; // show normal vectors
             //var segments = Math.ceil((tMax - tMin) * Math.pow(10, timeDivs));
-            var segments = 20;//timeDivs;
+            var segments = 8;//timeDivs;
             var tubeGeometry = new THREE.TubeGeometry(myKnot, segments, tubeRadius, radiusSegments, closedTube, debug);
     
             ///////////////////////////////////////////////
@@ -141,7 +141,7 @@ function playGraph() {
     tCurrent = tMin;
     playTimerId = null;
 
-    console.log(playSpeed);
+    //console.log(playSpeed);
     function playGraphOne() {
         updateGraph(dronBeziers, tCurrent);
         tCurrent += tInterval * playSpeed;

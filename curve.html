@@ -63,6 +63,7 @@
 		</a>
 	</div>
 	<div id="ThreeJS" style="margin:0px; overflow:hidden; background-color: gray;"></div>
+	<input id="pathCsvFile"  type="file" accept=".csv"  style="position: absolute; left:90%; top:95%; margin:5px; overflow:hidden;"/>
 <script>
 // ========================= GLOBAL VARS ================ //
 var autoUpdate = true;
@@ -103,7 +104,8 @@ var myScripts = [
 	"./make-safe-beziers.js",
 	"./make-graph.js",
 	"./make-csv.js",
-	"./make-views.js"
+	"./make-views.js",
+	"./read-csv.js",
 ];
 
 var q = '?t=' + Math.random();

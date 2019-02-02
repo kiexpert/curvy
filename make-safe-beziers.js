@@ -96,11 +96,8 @@ function findAvoidingBezier(id, cp, fin) {
 }
 
 function makeBeziers() {
-    var xFunc = Parser.parse(xFuncText).toJSFunction(['t', 'i']);
-    var yFunc = Parser.parse(yFuncText).toJSFunction(['t', 'i']);
-    var zFunc = Parser.parse(zFuncText).toJSFunction(['t', 'i']);
-    var wFunc = Parser.parse(yawFuncText).toJSFunction(['t', 'i']);
-    var dt = Math.max(0.001, (tMax - tMin) * 1.0 / timeDivs);//Math.pow(10, timeDivs);
+    var wFunc = yawFunc;
+    var dt = Math.max(0.01, (tMax - tMin) * 1.0 / timeDivs);//Math.pow(10, timeDivs);
 
     var id = 0, t;
     dronBeziers = [];
