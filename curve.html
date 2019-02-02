@@ -85,10 +85,10 @@ var xFuncText = "0.1*t*cos(3.14*0.4*t) + i*0.3"; //"t^2 - 3*t";
 var yFuncText = "0.1*t*sin(3.14*0.4*t) + i*0.3"; //"t^2 - 4*t^2";
 var zFuncText = "0.1*t"; //"(t^5 - 10*t)/5";
 var yawFuncText = "t / 10 * 3.1415926";
-var xFunc = Parser.parse(xFuncText).toJSFunction(['t']);
-var yFunc = Parser.parse(yFuncText).toJSFunction(['t']);
-var zFunc = Parser.parse(zFuncText).toJSFunction(['t']);
-var yawFunc = Parser.parse(yawFuncText).toJSFunction(['t']);
+var xFunc = Parser.parse(xFuncText).toJSFunction(['t', 'i']);
+var yFunc = Parser.parse(yFuncText).toJSFunction(['t', 'i']);
+var zFunc = Parser.parse(zFuncText).toJSFunction(['t', 'i']);
+var yawFunc = Parser.parse(yawFuncText).toJSFunction(['t', 'i']);
 
 var infoElm = document.getElementById('info');
 

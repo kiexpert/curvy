@@ -1,6 +1,61 @@
 var dronBeziers;
 
+function TrjBezier(bezier)
+{
+    var cp = this.cp = bezier;
+    // http://blog.naver.com/kyuniitale/40022945907
+    var ax, bx, cx, ay, by, cy, az, bz, cz, aw, bw, cw;
+
+    /* 다항식 계수를 계산한다 */
+    cx = 3.0 * (cp[1].x - cp[0].x);
+    bx = 3.0 * (cp[2].x - cp[1].x) - cx;
+    ax = cp[3].x - cp[0].x - cx - bx;
+
+    cy = 3.0 * (cp[1].y - cp[0].y);
+    by = 3.0 * (cp[2].y - cp[1].y) - cy;
+    ay = cp[3].y - cp[0].y - cy - by;
+
+    cz = 3.0 * (cp[1].z - cp[0].z);
+    bz = 3.0 * (cp[2].z - cp[1].z) - cz;
+    az = cp[3].z - cp[0].z - cz - bz;
+
+    cw = 3.0 * (cp[1].w - cp[0].w);
+    bw = 3.0 * (cp[2].w - cp[1].w) - cw;
+    aw = cp[3].w - cp[0].w - cw - bw;
+
+    //ct = 3.0 * (cp[1].t - cp[0].t);
+    //bt = 3.0 * (cp[2].t - cp[1].t) - ct;
+    //at = cp[3].t - cp[0].t - ct - bt;
+    var t0 = this.t0 = cp[0].t, tw = (this.t1 = cp[3].t) - t0, ts = 1.0 / tw;
+
+    /* 매개변수 값 t에서 곡선 점을 계산한다 */
+    var self = this;
+    this.iter = function(rt) {
+        self.t = rt;
+        var t = (rt - t0) * ts;
+        var tSquared = t * t;
+        var tCubed = tSquared * t;
+        self.x = (ax * tCubed) + (bx * tSquared) + (cx * t) + cp[0].x;
+        self.y = (ay * tCubed) + (by * tSquared) + (cy * t) + cp[0].y;
+        self.z = (az * tCubed) + (bz * tSquared) + (cz * t) + cp[0].z;
+        self.w = (aw * tCubed) + (bw * tSquared) + (cw * t) + cp[0].w;
+        return self;
+    };
+    this.iter0to1 = function(t) {
+        this.t = t * tw + t0;
+        var tSquared = t * t;
+        var tCubed = tSquared * t;
+        self.x = (ax * tCubed) + (bx * tSquared) + (cx * t) + cp[0].x;
+        self.y = (ay * tCubed) + (by * tSquared) + (cy * t) + cp[0].y;
+        self.z = (az * tCubed) + (bz * tSquared) + (cz * t) + cp[0].z;
+        self.w = (aw * tCubed) + (bw * tSquared) + (cw * t) + cp[0].w;
+        return self;
+    };
+    this.iter0to1(0);
+}
+
 function findAvoidingBezier(id, cp, fin) {
+    return new TrjBezier(cp);
     var i = dronBeziers.length;
     while (--i >= 0) {
         var cpa = dronBeziers[i];
@@ -37,7 +92,7 @@ function findAvoidingBezier(id, cp, fin) {
         // x = (ax * tCubed) + (bx * tSquared) + (cx * t) + cp[0].x;
         // y = (ay * tCubed) + (bx * tSquared) + (cy * t) + cp[0].y;
     }
-    return cp;
+    return new TrjBezier(cp);
 }
 
 function makeBeziers() {
@@ -93,44 +148,23 @@ function makeBeziers() {
             d = cp[3].z - zFunc(t, id), cp[3].z -= d, cp[2].z -= d;
             d = cp[3].w - wFunc(t, id), cp[3].w -= d, cp[2].w -= d;
 
-            cp = findAvoidingBezier(id, [
-                {
-                    t: cp[0].t,
-                    x: cp[0].x,
-                    y: cp[0].y,
-                    z: cp[0].z,
-                    w: cp[0].w,
-                },
-                {
-                    t: cp[1].t,
-                    x: cp[1].x,
-                    y: cp[1].y,
-                    z: cp[1].z,
-                    w: cp[1].w,
-                },
-                {
-                    t: cp[2].t,
-                    x: cp[2].x,
-                    y: cp[2].y,
-                    z: cp[2].z,
-                    w: cp[2].w,
-                },
-                {
-                    t: cp[3].t,
-                    x: cp[3].x,
-                    y: cp[3].y,
-                    z: cp[3].z,
-                    w: cp[3].w,
-                },
-            ], fittedBeziers.length == 0);
+            var tbz = findAvoidingBezier(id, cp, fittedBeziers.length == 0);
 
-            dronBeziers[id].push(cp);
+            dronBeziers[id].push(tbz);
 
-            x = cp[3].x;
-            y = cp[3].y;
-            z = cp[3].z;
-            w = cp[3].w;
-            t = cp[3].t;
+            tbz.iter0to1(1);
+            x = tbz.x;
+            y = tbz.y;
+            z = tbz.z;
+            w = tbz.w;
+
+            continue;
+            if (x != cp[3].x) console.log("anchor2.x mismatch!!! " + x + " != " + cp[3].x);
+            if (y != cp[3].y) console.log("anchor2.y mismatch!!! " + y + " != " + cp[3].y);
+            if (z != cp[3].z) console.log("anchor2.z mismatch!!! " + z + " != " + cp[3].z);
+            if (w != cp[3].w) console.log("anchor2.w mismatch!!! " + w + " != " + cp[3].w);
         }
     }
+
+    return dronBeziers;
 }
