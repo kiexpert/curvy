@@ -6,7 +6,7 @@ function path_csv() {
     var zFunc = Parser.parse(zFuncText).toJSFunction(['t', 'i']);
     var yawFunc = Parser.parse(yawFuncText).toJSFunction(['t', 'i']);
     var csv = 't,x,y,z,yaw\r\n'
-    for (var t = tMin; t <= tMax; t += 1 / timeres/*Math.pow(10, timeres)*/) {
+    for (var t = tMin; t <= tMax; t += 1 / timeDivs/*Math.pow(10, timeDivs)*/) {
         csv += t;
         csv += ',' + xFunc(t, 0);
         csv += ',' + yFunc(t, 0);
@@ -23,7 +23,7 @@ function traj_csv() {
     var yFunc = Parser.parse(yFuncText).toJSFunction(['t', 'i']);
     var zFunc = Parser.parse(zFuncText).toJSFunction(['t', 'i']);
     var yawFunc = Parser.parse(yawFuncText).toJSFunction(['t', 'i']);
-    var dt = 1 / timeres;//Math.pow(10, timeres);
+    var dt = 1 / timeDivs;//Math.pow(10, timeDivs);
     var points = [];//[[0, 0], [10, 10], [10, 0], [20, 0]];
     var timeps = [];
 

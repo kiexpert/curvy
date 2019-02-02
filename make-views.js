@@ -21,8 +21,8 @@ var views = [
     {
         left: 0.0,
         top: 0.0,
-        width: 0.198,
-        height: 0.195,
+        width: 0.2,
+        height: 0.2,
         //background: new THREE.Color(0.7, 0.5, 0.5),
         eye: [-viewDepth, 0, 1.5],
         up: [0, 0, 1],
@@ -37,8 +37,8 @@ var views = [
     {
         left: 0.0,
         top: 0.2,
-        width: 0.198,
-        height: 0.195,
+        width: 0.2,
+        height: 0.2,
         //background: new THREE.Color(0.7, 0.5, 0.5),
         eye: [0, -viewDepth, 1.5],
         up: [0, 0, 1],
@@ -53,8 +53,8 @@ var views = [
     {
         left: 0.0,
         top: 0.4,
-        width: 0.198,
-        height: 0.195,
+        width: 0.2,
+        height: 0.2,
         //background: new THREE.Color(0.7, 0.5, 0.5),
         eye: [0, 0, viewDepth],
         up: [0, 1, 0],
@@ -69,8 +69,8 @@ var views = [
     {
         left: 0.0,
         top: 0.6,
-        width: 0.198,
-        height: 0.195,
+        width: 0.2,
+        height: 0.2,
         //background: new THREE.Color(0.7, 0.5, 0.5),
         eye: [0, -viewDepth, 0],
         up: [0, 1, 0],
@@ -91,8 +91,8 @@ var views = [
     {
         left: 0.0,
         top: 0.8,
-        width: 0.198,
-        height: 0.195,
+        width: 0.2,
+        height: 0.2,
         //background: new THREE.Color(0.7, 0.5, 0.5),
         eye: [0, -viewDepth, 0],
         up: [0, 0, 1],
@@ -175,7 +175,7 @@ function render() {
         var height = Math.floor(windowHeight * view.height);
 
         renderer.setViewport(left, top, width, height);
-        renderer.setScissor(left, top, width, height);
+        renderer.setScissor(left, top, width - 2, height - 2);
         renderer.enableScissorTest(true);
         //renderer.setClearColor(view.background);
         renderer.setClearColor(0x000000);

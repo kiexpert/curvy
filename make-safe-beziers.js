@@ -45,27 +45,27 @@ function makeBeziers() {
     var yFunc = Parser.parse(yFuncText).toJSFunction(['t', 'i']);
     var zFunc = Parser.parse(zFuncText).toJSFunction(['t', 'i']);
     var wFunc = Parser.parse(yawFuncText).toJSFunction(['t', 'i']);
-    var dt = timeres;//Math.pow(10, timeres);
+    var dt = Math.max(0.001, (tMax - tMin) * 1.0 / timeDivs);//Math.pow(10, timeDivs);
 
-    var id = 0;
+    var id = 0, t;
     dronBeziers = [];
 
     for (; id < numDrones; id++) {
-        var points = [];//[[0, 0], [10, 10], [10, 0], [20, 0]];
-        for (var t = tMin; t <= tMax; t += dt)
+        var points = [];
+        for(t = tMin; t <= tMax; t += dt)
             points.push([xFunc(t, id), yFunc(t, id), zFunc(t, id), wFunc(t, id), t]);
 
         var error = 0.001; // 1mm 이하의 정확도로 분할! // The smaller the number - the much closer spline should be
         var fittedBeziers = fitCurve(points, error);
-        console.log(fittedBeziers);
+        //console.log(fittedBeziers);
 
         dronBeziers[id] = [];
 
-        var x = xFunc(tMin, id);
-        var y = yFunc(tMin, id);
-        var z = zFunc(tMin, id);
-        var w = wFunc(tMin, id); // yaw
-        var t = tMin; // time
+        t = tMin; // time
+        var x = xFunc(t, id);
+        var y = yFunc(t, id);
+        var z = zFunc(t, id);
+        var w = wFunc(t, id); // yaw
 
         for (var j = 0; j < fittedBeziers.length; j++) {
             var cp = fittedBeziers[j];
@@ -78,7 +78,7 @@ function makeBeziers() {
                 cp[i].t = cp[i][4]; // time
             }
 
-            var d, wFunc = yawFunc;
+            var d;
 
             // 실제 함수값에 근거해서 각 좌표를 보정한다.
             t = cp[0].t;

@@ -1,6 +1,10 @@
 
 var graphMeshes, graphMesh, wireMaterial;
 
+var xMin = 0.0, xMax = 1.0;
+var yMin = 0.0, yMax = 1.0;
+var zMin = 0.0, zMax = 1.0; // for autosizing window
+
 function createGraph() {
     xFunc = Parser.parse(xFuncText).toJSFunction(['t', 'i']);
     yFunc = Parser.parse(yFuncText).toJSFunction(['t', 'i']);
@@ -13,9 +17,9 @@ function createGraph() {
         scene.remove(graphMesh);
         // renderer.deallocateObject( graphMesh );
     }
-    xMin = 0, xMax = 1;
-    yMin = 0, yMax = 1;
-    zMin = 0, zMax = 1;
+    xMin = 0.0, xMax = 1.0;
+    yMin = 0.0, yMax = 1.0;
+    zMin = 0.0, zMax = 1.0;
 
     graphMeshes = [];
     //return;
@@ -36,8 +40,8 @@ function createGraph() {
 
         var closedTube = false; // connect the ends
         var debug = false; // show normal vectors
-        //var segments = Math.ceil((tMax - tMin) * Math.pow(10, timeres));
-        var segments = timeres;
+        //var segments = Math.ceil((tMax - tMin) * Math.pow(10, timeDivs));
+        var segments = timeDivs;
         var tubeGeometry = new THREE.TubeGeometry(myKnot, segments, tubeRadius, radiusSegments, closedTube, debug);
 
         ///////////////////////////////////////////////

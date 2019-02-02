@@ -71,7 +71,7 @@ var myKnot;
 var tubeMeshWire, tubeMeshSolid;
 
 // extrusion segments -- how many sample points to take along curve.
-var timeres = 100;
+var timeDivs = 100;
 var playSpeed = 4; // 1X play.
 var numDrones = 3;
 var safeDistance = 20;
@@ -89,8 +89,6 @@ var xFunc = Parser.parse(xFuncText).toJSFunction(['t']);
 var yFunc = Parser.parse(yFuncText).toJSFunction(['t']);
 var zFunc = Parser.parse(zFuncText).toJSFunction(['t']);
 var yawFunc = Parser.parse(yawFuncText).toJSFunction(['t']);
-
-var xMin = xMax = yMin = yMax = zMin = zMax = 0; // for autosizing window
 
 var infoElm = document.getElementById('info');
 
@@ -227,9 +225,9 @@ document.write(tags);
 				if (!autoUpdate) return;
 				createGraph();
 			});
-			gui_segments = gui.add(this, 'timeres').name('log-time-delta').min(100).max(1000).step(1);
+			gui_segments = gui.add(this, 'timeDivs').name('log-time-delta').min(100).max(1000).step(1);
 			gui_segments.onChange(function (value) {
-				timeres = value;
+				timeDivs = value;
 				if (!autoUpdate) return;
 				createGraph();
 			});
