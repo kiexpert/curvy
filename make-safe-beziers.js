@@ -55,42 +55,71 @@ function TrjBezier(bezier)
 }
 
 function findSafeBezier(id, cp, fin) {
-    return new TrjBezier(cp);
-    var i = dronBeziers.length;
+    if (id == 0)
+        return new TrjBezier(cp);
+    var ll = safeDistance * 0.01;
+    ll *= ll;
+
+    var i = dronBeziers.length, tbc;
+    var workCnt = 0;
+    var tdx = 0, tdy = 0, tdz = 0;
+    var xx, yy, zz;
+
     while (--i >= 0) {
         var cpa = dronBeziers[i];
-        var cp0 = cpa[cpa.length - 1];
+        if (cpa.length <= 0)
+            continue;
+
+        var j = cpa.length, tbz = null;
+        while(--j >= 0) {
+            tbz = cpa[j];
+            if (tbz.t0 == cp[0].t && tbz.t1 == cp[3].t )
+                break;
+        }
+        if (j < 0) continue;
+
         // TODO: avoiding...
+        tbc = new TrjBezier(cp);
 
-        // http://blog.naver.com/kyuniitale/40022945907
-        var ax, bx, cx, ay, by, cy, az, bz, cz, aw, bw, cw, tSquared, tCubed;
+        var t = tbc.t0, tEnd = tbc.t1, dt = 0.01;
+        for(; t <= tEnd; t += dt) {
+            tbc.iter(t);
+            tbz.iter(t);
+            xx = tbc.x - tbz.x, xx *= xx;
+            yy = tbc.y - tbz.y, yy *= yy;
+            zz = tbc.z - tbz.z, zz *= zz; // z축은 더 강조??
+            if(xx + yy + zz > ll) continue;
+            tdx += tbc.x - tbz.x;
+            tdy += tbc.y - tbz.y;
+            tdz += tbc.z - tbz.z;
+            workCnt++;
+            break;
+        }
+        if(i > 0) continue;
+        if(workCnt == 0)
+            return tbc;
 
-        /* 다항식 계수를 계산한다 */
-        cx = 3.0 * (cp[1].x - cp[0].x);
-        bx = 3.0 * (cp[2].x - cp[1].x) - cx;
-        ax = cp[3].x - cp[0].x - cx - bx;
+        i = dronBeziers.length;
+        workCnt = 0;
 
-        cy = 3.0 * (cp[1].y - cp[0].y);
-        by = 3.0 * (cp[2].y - cp[1].y) - cy;
-        ay = cp[3].y - cp[0].y - cy - by;
+        // 진행 방향에서 조금 회전된 벡터 방향으로 밀어 준다.
+        var cs = Math.cos(3.14 / 180 * -90) * safeDistance / 100;
+        var sn = Math.sin(3.14 / 180 * -90) * safeDistance / 100;
+        var cx = cp[3].x - cp[0].x;
+        var cy = cp[3].y - cp[0].y;
+        var ls = 1.0 / Math.sqrt(cx*cx + cy*cy);
+        cx *= ls;
+        cy *= ls;
+        var dx = cx * cs - cy * sn;
+        var dy = cx * sn + cy * cs;
+        cp[1].x += dx, cp[1].y += dy;
+        cp[2].x += dx, cp[2].y += dy;
+        cp[3].x += dx, cp[3].y += dy;
 
-        cz = 3.0 * (cp[1].z - cp[0].z);
-        bz = 3.0 * (cp[2].z - cp[1].z) - cz;
-        az = cp[3].z - cp[0].z - cz - bz;
+        if(dronBeziers[id].length==0)
+            cp[0].x += dx, cp[0].y += dy;
 
-        cw = 3.0 * (cp[1].w - cp[0].w);
-        bw = 3.0 * (cp[2].w - cp[1].w) - cw;
-        aw = cp[3].w - cp[0].w - cw - bw;
-
-        //ct = 3.0 * (cp[1].t - cp[0].t);
-        //bt = 3.0 * (cp[2].t - cp[1].t) - ct;
-        //at = cp[3].t - cp[0].t - ct - bt;
-
-        /* 매개변수 값 t에서 곡선 점을 계산한다 */
-        //tSquared = t * t;
-        //tCubed = tSquared * t;
-        // x = (ax * tCubed) + (bx * tSquared) + (cx * t) + cp[0].x;
-        // y = (ay * tCubed) + (bx * tSquared) + (cy * t) + cp[0].y;
+        // 처음부터 다시 확인!
     }
     return new TrjBezier(cp);
 }

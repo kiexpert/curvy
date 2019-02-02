@@ -83,8 +83,8 @@ var tubeRadius = 0.02;
 
 var tMin = 0, tMax = 10, tRange = tMax - tMin;
 var fitError = 0.001;
-var xFuncText = "0.1*t*cos(3.14*0.4*t) + i*0.3"; //"t^2 - 3*t";
-var yFuncText = "0.1*t*sin(3.14*0.4*t) + i*0.3"; //"t^2 - 4*t^2";
+var xFuncText = "0.1*t*cos(3.14*0.4*t) + i*0.0"; //"t^2 - 3*t";
+var yFuncText = "0.1*t*sin(3.14*0.4*t) + i*0.0"; //"t^2 - 4*t^2";
 var zFuncText = "0.1*t"; //"(t^5 - 10*t)/5";
 var yawFuncText = "t / 10 * 3.1415926";
 var xFunc = Parser.parse(xFuncText).toJSFunction(['t', 'i']);
