@@ -82,6 +82,7 @@ var radiusSegments = 6;
 var tubeRadius = 0.02;
 
 var tMin = 0, tMax = 10, tRange = tMax - tMin;
+var fitError = 0.001;
 var xFuncText = "0.1*t*cos(3.14*0.4*t) + i*0.3"; //"t^2 - 3*t";
 var yFuncText = "0.1*t*sin(3.14*0.4*t) + i*0.3"; //"t^2 - 4*t^2";
 var zFuncText = "0.1*t"; //"(t^5 - 10*t)/5";
@@ -128,7 +129,7 @@ document.write(tags);
 
 		// custom global variables
 		var gui, gui_xText, gui_yText, gui_zText,
-			gui_tMin, gui_tMax,
+			gui_tMin, gui_tMax, gui_FitError,
 			gui_a, gui_b, gui_c, gui_d,
 			gui_segments, gui_radiusSegments, gui_tubeRadius;
 		var gui_numDrones, gui_safeDistance;
@@ -227,6 +228,12 @@ document.write(tags);
 				if (!autoUpdate) return;
 				createGraph();
 			});
+			gui_fitError = gui.add(this, 'fitError').name('Fit Error');
+			gui_fitError.onChange(function (value) {
+				fitError = value;
+				if (!autoUpdate) return;
+				createGraph();
+			});
 			gui_segments = gui.add(this, 'timeDivs').name('log-time-delta').min(100).max(1000).step(1);
 			gui_segments.onChange(function (value) {
 				timeDivs = value;
@@ -278,6 +285,7 @@ document.write(tags);
 			gui_yText.setValue(yFuncText);
 			gui_zText.setValue(zFuncText);
 			gui_tMin.setValue(tMin); gui_tMax.setValue(tMax);
+			gui_fitError.setValue(fitError);
 			gui_segments.setValue(120);
 			createGraph(); resetCamera();
 			autoUpdate = true;

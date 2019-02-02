@@ -54,7 +54,7 @@ function TrjBezier(bezier)
     this.iter0to1(0);
 }
 
-function findAvoidingBezier(id, cp, fin) {
+function findSafeBezier(id, cp, fin) {
     return new TrjBezier(cp);
     var i = dronBeziers.length;
     while (--i >= 0) {
@@ -107,8 +107,7 @@ function makeBeziers() {
         for(t = tMin; t <= tMax; t += dt)
             points.push([xFunc(t, id), yFunc(t, id), zFunc(t, id), wFunc(t, id), t]);
 
-        var error = 0.001; // 1mm 이하의 정확도로 분할! // The smaller the number - the much closer spline should be
-        var fittedBeziers = fitCurve(points, error);
+        var fittedBeziers = fitCurve(points, fitError);
         //console.log(fittedBeziers);
 
         dronBeziers[id] = [];
@@ -145,7 +144,7 @@ function makeBeziers() {
             d = cp[3].z - zFunc(t, id), cp[3].z -= d, cp[2].z -= d;
             d = cp[3].w - wFunc(t, id), cp[3].w -= d, cp[2].w -= d;
 
-            var tbz = findAvoidingBezier(id, cp, fittedBeziers.length == 0);
+            var tbz = findSafeBezier(id, cp, fittedBeziers.length == 0);
 
             dronBeziers[id].push(tbz);
 

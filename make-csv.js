@@ -30,8 +30,7 @@ function traj_csv() {
     for (var t = tMin; t <= tMax; t += dt)
         points.push([xFunc(t, 0), yFunc(t, 0), zFunc(t, 0), yawFunc(t, 0), t]);
 
-    var error = 0.001; // 1mm 이하의 정확도로 분할! // The smaller the number - the much closer spline should be
-    var fittedBeziers = fitCurve(points, error);
+    var fittedBeziers = fitCurve(points, fitError);
     console.log(fittedBeziers);
 
     var csv = "Duration,x^0,x^1,x^2,x^3,x^4,x^5,x^6,x^7,y^0,y^1,y^2,y^3,y^4,y^5,y^6,y^7,z^0,z^1,z^2,z^3,z^4,z^5,z^6,z^7,yaw^0,yaw^1,yaw^2,yaw^3,yaw^4,yaw^5,yaw^6,yaw^7\r\n";
