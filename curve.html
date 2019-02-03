@@ -74,7 +74,7 @@ var tubeMeshWire, tubeMeshSolid;
 // extrusion segments -- how many sample points to take along curve.
 var timeDivs = 100;
 var playSpeed = 4; // 1X play.
-var numDrones = 3;
+var numDrones = 5;
 var safeDistance = 20;
 
 // how many sides the tube cross-section has
@@ -83,9 +83,16 @@ var tubeRadius = 0.02;
 
 var tMin = 0, tMax = 10, tRange = tMax - tMin;
 var fitError = 0.001;
-var xFuncText = "0.1*t*cos(3.14*0.4*t) + i*0.0"; //"t^2 - 3*t";
-var yFuncText = "0.1*t*sin(3.14*0.4*t) + i*0.0"; //"t^2 - 4*t^2";
-var zFuncText = "0.1*t"; //"(t^5 - 10*t)/5";
+//var xFuncText = "0.1*t*cos(3.14*0.4*t) + i*0.0"; //"t^2 - 3*t";
+//var yFuncText = "0.1*t*sin(3.14*0.4*t) + i*0.0"; //"t^2 - 4*t^2";
+var PI = 3.14159265358979323846;
+var xFuncText =
+	"cos(PI*0.8*i)*(tMax-min(tMax,t*2))/(tMax-tMin) + cos(PI*0.8*(i+1) + max(0,min(1,t*2/tMax-1))*PI)*min(tMax,t*2)/(tMax-tMin)"
+	;
+var yFuncText =
+	"sin(PI*0.8*i)*(tMax-min(tMax,t*2))/(tMax-tMin) + sin(PI*0.8*(i+1) + max(0,min(1,t*2/tMax-1))*PI)*min(tMax,t*2)/(tMax-tMin)"
+	;
+var zFuncText = "max(1, 0.2*t)"; //"(t^5 - 10*t)/5";
 var yawFuncText = "t / 10 * 3.1415926";
 var xFunc = Parser.parse(xFuncText).toJSFunction(['t', 'i']);
 var yFunc = Parser.parse(yFuncText).toJSFunction(['t', 'i']);
@@ -213,7 +220,7 @@ document.write(tags);
 			gui_zText.onChange(function (value) { if (autoUpdate) createGraph(); });
 			gui_yawText = gui.add(this, 'yawFuncText').name('yaw(t,i) = ');
 			gui_yawText.onChange(function (value) { if (autoUpdate) createGraph(); });
-			gui_tMin = gui.add(this, 'tMin').name('t Minimum = ');
+			gui_tMin = gui.add(this, 'tMin').name('tMin = ');
 			gui_tMin.onChange(function (value) {
 				if (autoUpdate) {
 					tMin = value;
@@ -221,7 +228,7 @@ document.write(tags);
 					createGraph();
 				}
 			});
-			gui_tMax = gui.add(this, 'tMax').name('t Maximum = ');
+			gui_tMax = gui.add(this, 'tMax').name('tMax = ');
 			gui_tMax.onChange(function (value) {
 				tMax = value;
 				tRange = tMax - tMin;

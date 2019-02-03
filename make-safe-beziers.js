@@ -134,9 +134,9 @@ function findSafeBezier(id, cp, fin) {
         //dy += avy * avc;
 
         // 컨트롤 포인트 두개와 목표 앵커점을 회전된 벡터만큼 밀어준다.
-        if(ctm32 & 0xffffffff) cp[1].x += dx, cp[1].y += dy;
-        if(ctm32 & 0xffffffff) cp[2].x += dx, cp[2].y += dy;
-        if(ctm32 & 0xffffffff) cp[3].x += dx, cp[3].y += dy;
+        if(ctm32 & 0xffffffff) cp[1].x += dx * 0.7, cp[1].y += dy * 0.7;
+        if(ctm32 & 0xffffffff) cp[2].x += dx * 0.9, cp[2].y += dy * 0.9;
+        if(ctm32 & 0xffffffff) cp[3].x += dx * 1.0, cp[3].y += dy * 1.0;
 
         // 시작점이 충돌하는 경우는 시작점도 밀어준다.
         if(dronBeziers[id].length==0)
