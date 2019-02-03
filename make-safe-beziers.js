@@ -57,69 +57,96 @@ function TrjBezier(bezier)
 function findSafeBezier(id, cp, fin) {
     if (id == 0)
         return new TrjBezier(cp);
-    var ll = safeDistance * 0.01;
-    ll *= ll;
+    var LL = safeDistance * 0.01; LL *= LL; // 안전거리의 제곱...
+    var LL4 = LL * 4; // 안전거리 두배의 제곱...
 
     var i = dronBeziers.length, tbc;
     var workCnt = 0;
-    var tdx = 0, tdy = 0, tdz = 0;
+    var avx = 0, avy = 0, avz = 0, avc = 0; // avoiding vector sum...
     var xx, yy, zz;
+    var ctm32 = 0; // collide time mask
+    var t0 = cp[0].t, tEnd = cp[3].t;
 
     while (--i >= 0) {
-        var cpa = dronBeziers[i];
-        if (cpa.length <= 0)
+        var tba = dronBeziers[i];
+        if (tba.length <= 0)
             continue;
 
-        var j = cpa.length, tbz = null;
+        var j = tba.length, tbz = null;
         while(--j >= 0) {
-            tbz = cpa[j];
-            if (tbz.t0 == cp[0].t && tbz.t1 == cp[3].t )
+            tbz = tba[j];
+            if (tbz.t0 == t0 && tbz.t1 >= tEnd )
                 break;
         }
         if (j < 0) continue;
 
-        // TODO: avoiding...
+        // find collision & avoidance...
         tbc = new TrjBezier(cp);
-
-        var t = tbc.t0, tEnd = tbc.t1, dt = 0.01;
+        var t = t0, dt = Math.min(0.01, (tEnd - t) / 32.0);
         for(; t <= tEnd; t += dt) {
             tbc.iter(t);
             tbz.iter(t);
             xx = tbc.x - tbz.x, xx *= xx;
             yy = tbc.y - tbz.y, yy *= yy;
-            zz = tbc.z - tbz.z, zz *= zz; // z축은 더 강조??
-            if(xx + yy + zz > ll) continue;
-            tdx += tbc.x - tbz.x;
-            tdy += tbc.y - tbz.y;
-            tdz += tbc.z - tbz.z;
+            zz = tbc.z - tbz.z, zz *= zz * 0.25; // z축은 더 강조??
+            if(xx + yy + zz > LL4) continue;
+
+            // 안전거리 두배 이내에 진입...
+            var avs = Math.sqrt(xx + yy + zz);
+            if (avs) {
+                // merge avoiding vector...
+                avs = 1.0 / avs;
+                avx += (tbc.x - tbz.x) * avs;
+                avy += (tbc.y - tbz.y) * avs;
+                avz += (tbc.z - tbz.z) * avs;
+            }
+            avc++;
+            if(xx + yy + zz > LL) continue;
+
+            // found collision...
+            // 안전거리 이내에 진입...
             workCnt++;
+            var cmsh = (t - t0) * 31 / (tEnd - t0) | 0;
+            ctm32 |= 1 << cmsh;
+
+            //tEnd = t; // 다음 드론의 확인 범위 줄이기...
             break;
         }
         if(i > 0) continue;
         if(workCnt == 0)
             return tbc;
 
-        i = dronBeziers.length;
-        workCnt = 0;
-
-        // 진행 방향에서 조금 회전된 벡터 방향으로 밀어 준다.
-        var cs = Math.cos(3.14 / 180 * -90) * safeDistance / 100;
-        var sn = Math.sin(3.14 / 180 * -90) * safeDistance / 100;
+        // avoidance...
+        // 진행 방향에서 조금 회전된 안전거리 크기의 벡터를 구한다.
+        var cs = Math.cos(3.14 / 180 * -90);
+        var sn = Math.sin(3.14 / 180 * -90);
         var cx = cp[3].x - cp[0].x;
         var cy = cp[3].y - cp[0].y;
-        var ls = 1.0 / Math.sqrt(cx*cx + cy*cy);
+        var ls = safeDistance * 0.01 / Math.sqrt(cx*cx + cy*cy);
         cx *= ls;
         cy *= ls;
         var dx = cx * cs - cy * sn;
         var dy = cx * sn + cy * cs;
-        cp[1].x += dx, cp[1].y += dy;
-        cp[2].x += dx, cp[2].y += dy;
-        cp[3].x += dx, cp[3].y += dy;
 
+        // TODO: optimize with avoiding vector
+        //avc = safeDistance * 0.01 / avc;
+        //dx += avx * avc;
+        //dy += avy * avc;
+
+        // 컨트롤 포인트 두개와 목표 앵커점을 회전된 벡터만큼 밀어준다.
+        if(ctm32 & 0xffffffff) cp[1].x += dx, cp[1].y += dy;
+        if(ctm32 & 0xffffffff) cp[2].x += dx, cp[2].y += dy;
+        if(ctm32 & 0xffffffff) cp[3].x += dx, cp[3].y += dy;
+
+        // 시작점이 충돌하는 경우는 시작점도 밀어준다.
         if(dronBeziers[id].length==0)
             cp[0].x += dx, cp[0].y += dy;
 
         // 처음부터 다시 확인!
+        i = dronBeziers.length;
+        workCnt = ctm32 = 0;
+        avx = avy = avz = avc = 0;
+        tEnd = cp[3].t;
     }
     return new TrjBezier(cp);
 }
