@@ -262,7 +262,7 @@ var Parser = (function (scope) {
 					}
 				}
 				else if (type_ === TFUNCALL) {
-					n1 = nstack.pop();
+					n1 = nstack.pop().replace(/^\((.*)\)$/,'$1'); // 괄호 제거 - by kiexpert@kivi
 					f = nstack.pop();
 					nstack.push(f + "(" + n1 + ")");
 				}
