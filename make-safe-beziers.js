@@ -66,6 +66,7 @@ function findSafeBezier(id, cp, fin) {
     var xx, yy, zz;
     var ctm32 = 0; // collide time mask
     var t0 = cp[0].t, tEnd = cp[3].t;
+    var tryCnt = 99;
 
     while (--i >= 0) {
         var tba = dronBeziers[i];
@@ -115,6 +116,10 @@ function findSafeBezier(id, cp, fin) {
         if(i > 0) continue;
         if(workCnt == 0)
             return tbc;
+        if(--tryCnt <= 0) {
+            console.log("dron #"+id+" avoiding failure!");
+            return tbc;
+        }
 
         // avoidance...
         // 진행 방향에서 조금 회전된 안전거리 크기의 벡터를 구한다.
