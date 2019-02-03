@@ -28,10 +28,10 @@ var views = [
         up: [0, 0, 1],
         fov: 45,
         updateCamera: function (camera, scene, mouseX) {
+            camera.lookAt(scene.position.clone().setZ(1.5));
             //camera.position.x -= mouseX * 0.05;
             //camera.position.x = Math.max( Math.min( camera.position.x, 2000 ), - 2000 );
             //camera.lookAt( camera.position.clone().setY( 0 ) );
-
         }
     },
     {
@@ -44,10 +44,10 @@ var views = [
         up: [0, 0, 1],
         fov: 45,
         updateCamera: function (camera, scene, mouseX) {
+            camera.lookAt(scene.position.clone().setZ(1.5));
             //camera.position.x -= mouseX * 0.05;
             //camera.position.x = Math.max( Math.min( camera.position.x, 2000 ), - 2000 );
             //camera.lookAt( camera.position.clone().setY( 0 ) );
-
         }
     },
     {
@@ -63,7 +63,6 @@ var views = [
             //camera.position.x -= mouseX * 0.05;
             //camera.position.x = Math.max( Math.min( camera.position.x, 2000 ), - 2000 );
             //camera.lookAt( camera.position.clone().setY( 0 ) );
-
         }
     },
     {
