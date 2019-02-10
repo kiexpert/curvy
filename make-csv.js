@@ -19,47 +19,14 @@ function path_csv() {
 
 // export the trajectory to csv file and download.
 function traj_csv() {
-    var xFunc = Parser.parse(xFuncText).toJSFunction(['t', 'i']);
-    var yFunc = Parser.parse(yFuncText).toJSFunction(['t', 'i']);
-    var zFunc = Parser.parse(zFuncText).toJSFunction(['t', 'i']);
-    var yawFunc = Parser.parse(yawFuncText).toJSFunction(['t', 'i']);
-    var dt = 1 / timeDivs;//Math.pow(10, timeDivs);
-    var points = [];//[[0, 0], [10, 10], [10, 0], [20, 0]];
-    var timeps = [];
-
-    for (var t = tMin; t <= tMax; t += dt)
-        points.push([xFunc(t, 0), yFunc(t, 0), zFunc(t, 0), yawFunc(t, 0), t]);
-
-    var fittedBeziers = fitCurve(points, fitError);
-    console.log(fittedBeziers);
+    var id = 0;
+    var fittedBeziers = dronBeziers[id];//fitCurve(points, fitError);
 
     var csv = "Duration,x^0,x^1,x^2,x^3,x^4,x^5,x^6,x^7,y^0,y^1,y^2,y^3,y^4,y^5,y^6,y^7,z^0,z^1,z^2,z^3,z^4,z^5,z^6,z^7,yaw^0,yaw^1,yaw^2,yaw^3,yaw^4,yaw^5,yaw^6,yaw^7\r\n";
 
-    for (var t = tMin; fittedBeziers.length > 0;) {
-        var cp = fittedBeziers.shift();
-        var i = cp.length;
-        while (--i >= 0) {
-            cp[i].x = cp[i][0];
-            cp[i].y = cp[i][1];
-            cp[i].z = cp[i][2];
-            cp[i].w = cp[i][3]; // yaw
-            cp[i].t = cp[i][4]; // time
-        }
-
+    for (var i = 0; i < fittedBeziers.length; i++) {
+        var cp = fittedBeziers[i].cp;
         var d, wFunc = yawFunc;
-
-        // 실제 함수값에 근거해서 각 좌표를 보정한다.
-        t = cp[0].t;
-        d = cp[0].x - xFunc(t, 0), cp[0].x -= d, cp[1].x -= d;
-        d = cp[0].y - yFunc(t, 0), cp[0].y -= d, cp[1].y -= d;
-        d = cp[0].z - zFunc(t, 0), cp[0].z -= d, cp[1].z -= d;
-        d = cp[0].w - wFunc(t, 0), cp[0].w -= d, cp[1].w -= d;
-
-        t = cp[3].t;
-        d = cp[3].x - xFunc(t, 0), cp[3].x -= d, cp[2].x -= d;
-        d = cp[3].y - yFunc(t, 0), cp[3].y -= d, cp[2].y -= d;
-        d = cp[3].z - zFunc(t, 0), cp[3].z -= d, cp[2].z -= d;
-        d = cp[3].w - wFunc(t, 0), cp[3].w -= d, cp[2].w -= d;
 
         // http://blog.naver.com/kyuniitale/40022945907
         var ax, bx, cx, ay, by, cy, az, bz, cz, aw, bw, cw, tSquared, tCubed;

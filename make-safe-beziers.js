@@ -193,13 +193,13 @@ function makeBeziers() {
             var d;
 
             // 실제 함수값에 근거해서 각 좌표를 보정한다.
-            t = cp[0].t;
+            cp[0].t = t;
             d = cp[0].x - x, cp[0].x -= d, cp[1].x -= d;
             d = cp[0].y - y, cp[0].y -= d, cp[1].y -= d;
             d = cp[0].z - z, cp[0].z -= d, cp[1].z -= d;
             d = cp[0].w - w, cp[0].w -= d, cp[1].w -= d;
 
-            t = cp[3].t;
+            cp[3].t = t = Math.round(cp[3].t * 100) * 0.01;
             d = cp[3].x - xFunc(t, id), cp[3].x -= d, cp[2].x -= d;
             d = cp[3].y - yFunc(t, id), cp[3].y -= d, cp[2].y -= d;
             d = cp[3].z - zFunc(t, id), cp[3].z -= d, cp[2].z -= d;
@@ -209,7 +209,7 @@ function makeBeziers() {
 
             dronBeziers[id].push(tbz);
 
-            tbz.iter0to1(1);
+            tbz.iter(t);
             x = tbz.x;
             y = tbz.y;
             z = tbz.z;
