@@ -10,13 +10,14 @@ if(File && FileReader && FileList && Blob) {
 			var csv = this.result + '';
 			//infoElm.innerText = csv;
 
-			var lines = csv.replace(/\r+|\s+$/g, '').split('\n');
+			var lines = csv.replace(/\r+|\r\n\r|\s+$/g, '').split('\n');
 			var fields = lines.shift().split(',');
 			var ts=[], xs=[], ys=[], zs=[], ws=[];
-			var i = -1;
+			var i = -1, t0 = Math.floor(lines[0].split(',')[0] * 100) / 100;
+			var tc = t0 >= 50 ? 100*0.001 : 100;
 			while(++i < lines.length) {
 				var sar = lines[i].split(',');
-				ts[i] = Math.floor(sar[0] * 100) / 100;
+				ts[i] = Math.floor(sar[0] * tc) * 0.01;
 				xs[i] = parseFloat(sar[1]);
 				ys[i] = parseFloat(sar[2]);
 				zs[i] = parseFloat(sar[3]);
