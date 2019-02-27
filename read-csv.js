@@ -17,7 +17,7 @@ if(File && FileReader && FileList && Blob) {
 			var tc = t0 >= 50 ? 100*0.001 : 100;
 			while(++i < lines.length) {
 				var sar = lines[i].split(',');
-				ts[i] = Math.floor(sar[0] * tc) * 0.01;
+				ts[i] = Math.floor((sar[0] - t0) * tc) * 0.01;
 				xs[i] = parseFloat(sar[1]);
 				ys[i] = parseFloat(sar[2]);
 				zs[i] = parseFloat(sar[3]);
