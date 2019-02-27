@@ -14,7 +14,7 @@ if(File && FileReader && FileList && Blob) {
 			var fields = lines.shift().split(',');
 			var ts=[], xs=[], ys=[], zs=[], ws=[];
 			var i = -1, t0 = Math.floor(lines[0].split(',')[0] * 100) / 100;
-			var tc = t0 >= 50 ? 100*0.001 : 100;
+			var tc = t0 >= 50 && Math.floor(t0) == t0 ? 100*0.001 : 100;
 			while(++i < lines.length) {
 				var sar = lines[i].split(',');
 				ts[i] = Math.floor((sar[0] - t0) * tc) * 0.01;
